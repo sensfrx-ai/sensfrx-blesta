@@ -1,0 +1,99 @@
+<?php
+        // if (isset($_REQUEST["UpdateNotificationsSetting"])) {
+        //     echo "<pre>";
+        //     print_r($_REQUEST);
+        //     print_r($_POST);
+
+        //     die;
+        // }
+if (count($assets["stylesheet"]) > 0) :
+    foreach ($assets["stylesheet"] as $key => $css) :
+        echo "<link rel='stylesheet' href='$css'>";
+    endforeach;
+endif;
+
+require __DIR__ . "/default/navbar.pdt";
+?>
+
+<?php
+    if (isset($resultPrivacyUpdate12["result"]) && !empty($resultPrivacyUpdate12["result"])) :
+        if ($resultPrivacyUpdate12["result"]["status"] == "success") :
+            ?>
+            <div class="alert alert-success" role="alert">
+                <?php echo htmlspecialchars($resultPrivacyUpdate12["result"]["message"]); ?>
+            </div>
+            <?php
+           
+        else :
+            ?>
+            <div class="alert alert-danger" role="alert">
+                <?php echo htmlspecialchars($resultPrivacyUpdate12["result"]["message"]); ?>
+            </div>
+            <?php
+        return 0;
+        endif;
+    endif;
+    ?>
+<div class="sensfrx-form-container" id="sensfrx-notification-table-tr-shine">
+    <form class="sensfrx-notificatoin-form-shine" method="post">
+        <h3><?php echo Language::_('SensfrxPlugin.notification.heading', true); ?></h3>
+        <p class="sensfrx-notification-form-p-mess">
+            <div class="sensfrx-custom-div"><?php echo Language::_('SensfrxPlugin.notification.heading13', true); ?></div>
+        </p>
+        <!-- Notification-config-message -->
+        <div class="sensfrx-notification-form-p-mess email-check_box">
+            <input type="checkbox" id="emailCheckboxx" name="emailCheckbox" class="sensfrx-checkbox" <?php if ($result_alerts['result']['data']['enabled'] == 'on') { echo 'checked'; } ?>>
+            <label for="emailCheckbox" class="sensfrx-label"><?php echo Language::_('SensfrxPlugin.notification.heading1', true); ?></label>
+         
+        </div>
+
+        <p class="sensfrx-notification-form-p-mess">
+            <div class="sensfrx-custom-div"><?php echo Language::_('SensfrxPlugin.notification.heading2', true); ?></div>
+        </p>
+
+        <div class="sensfrx-notification-form-p-mess">
+            <label for="threshold" class="sensfrx-label"><?php echo Language::_('SensfrxPlugin.notification.heading11', true); ?></label>
+            <select id="threshold" name="threshold" class="sensfrx-notification-selsct-dropdown-email">
+                <option value="30" <?php if ($result_alerts['result']['data']['risk_threshold'] == '30') echo 'selected'; ?>><?php echo Language::_('SensfrxPlugin.notification.heading3', true); ?></option>
+                <option value="40" <?php if ($result_alerts['result']['data']['risk_threshold'] == '40') echo 'selected'; ?>><?php echo Language::_('SensfrxPlugin.notification.heading4', true); ?></option>
+                <option value="50" <?php if ($result_alerts['result']['data']['risk_threshold'] == '50') echo 'selected'; ?>><?php echo Language::_('SensfrxPlugin.notification.heading5', true); ?></option>
+                <option value="60" <?php if ($result_alerts['result']['data']['risk_threshold'] == '60') echo 'selected'; ?>><?php echo Language::_('SensfrxPlugin.notification.heading6', true); ?></option>
+                <option value="70" <?php if ($result_alerts['result']['data']['risk_threshold'] == '70') echo 'selected'; ?>><?php echo Language::_('SensfrxPlugin.notification.heading7', true); ?></option>
+                <option value="80" <?php if ($result_alerts['result']['data']['risk_threshold'] == '80') echo 'selected'; ?>><?php echo Language::_('SensfrxPlugin.notification.heading8', true); ?></option>
+                <option value="90" <?php if ($result_alerts['result']['data']['risk_threshold'] == '90') echo 'selected'; ?>><?php echo Language::_('SensfrxPlugin.notification.heading9', true); ?></option>
+                <option value="100" <?php if ($result_alerts['result']['data']['risk_threshold'] == '100') echo 'selected'; ?>><?php echo Language::_('SensfrxPlugin.notification.heading10', true); ?></option>
+            </select>
+        </div>
+
+        <div class="sensfrx-notification-form-p-mess">
+            <label for="emailInput22" class="sensfrx-label"><?php echo Language::_('SensfrxPlugin.notification.heading12', true); ?></label>
+            <input type="email" id="emailInput22" name="emailInput" class="sensfrx-input" placeholder="Enter your email address" value="<?php echo $result_alerts['result']['data']['email']; ?>" required>
+        </div>
+
+        <div class="sensfrx-notification-form-p-mess">
+            <input type="submit"  name= "UpdateNotificationsSetting" value="Update Settings" class="sensfrx-notification-save-button">
+        </div>
+    </form>
+</div>
+
+<script>
+function getClickedValueNotification(submitButton) {
+    var email = $('#emailInput22').val();
+
+    if (email === "") {
+        alert("Please fill the Email.");
+        return false;
+    } else {
+        var emailValue = $('#emailInput22').val();
+        var checkboxValue = $('#emailCheckboxx').prop('checked') ? '1' : '0';
+        var dropdownValue = $('#threshold').val();
+
+        setTimeout(function() {
+            $('#hiddeneamil').val(emailValue);
+            $('#hiddencheckbox').val(checkboxValue);
+            $('#hiddendropdown').val(dropdownValue);
+            $('#Notification').click();
+        }, 100); 
+    }
+}
+</script>

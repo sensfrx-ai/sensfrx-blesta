@@ -1,0 +1,273 @@
+<?php
+if (count($assets["stylesheet"]) > 0) :
+    foreach ($assets["stylesheet"] as $key => $css) :
+        echo "<link rel='stylesheet' href='$css'>";
+    endforeach;
+endif;
+
+require __DIR__ . "/default/navbar.pdt";
+?>
+
+<div class="policies_settings">
+    <?php
+    if (!empty($successMessage)) {
+    ?>
+        <div class="alert alert-success" role="alert"> <?php echo $successMessage; ?></div>
+    <?php
+    }
+
+    if (!empty($errorMessage)) { ?>
+        <div class="alert alert-danger" role="alert"> <?php echo $errorMessage; ?></div>
+    <?php
+    return 0;
+    }
+    ?>
+
+    <ul class="tabs">
+        <li class="active-tab"><?php echo Language::_('SensfrxPlugin.Policies.tab1', true); ?></li>
+        <li><?php echo Language::_('SensfrxPlugin.Policies.tab2', true); ?></li>
+        <li><?php echo Language::_('SensfrxPlugin.Policies.tab3', true); ?></li>
+        <li><?php echo Language::_('SensfrxPlugin.Policies.tab4', true); ?></li>
+    </ul>
+
+    <ul class="tabs-content">
+        <form action="" method="POST">
+            <li>
+                <div class="card">
+                    <div class="card-header">
+                        <h2><span><?php echo Language::_('SensfrxPlugin.Policies.tab1', true); ?></span></h2>
+                    </div>
+                    <div class="card-body">
+                        <span class="account-setting">
+                            <i><?php echo Language::_('Sensfrx.admin.dashboard.description', true); ?></i>
+                        </span>
+
+                        <!-- Allow Section -->
+                        <div class="section-container">
+                            <div class="section-title">1. Allow</div>
+                            <div class="section-subtitle">(Low Score No Friction)</div>
+                            <div class="mb-2">
+                                <div class="risk-text">Low Risk - No action</div>
+                                <div class="risk-text">Medium Risk- Action</div>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="allow" name="allow" <?php echo isset($formatedData["policies_settings"]["allow"]) && $formatedData["policies_settings"]["allow"] == "on" ? "checked" : ''; ?>>
+                                <label class="form-check-label" for="allow">Send Device Approval E-mail </label>
+                            </div>
+                        </div>
+
+                        <!-- Challenge Section -->
+                        <div class="section-container">
+                            <div class="section-title">2. Challenge</div>
+                            <div class="section-subtitle">(High Score will be presented with challenge)</div>
+                            <div class="mb-2">
+                                <div class="risk-text">High Risk - Action</div>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="challenge" name="challenge" <?php echo isset($formatedData["policies_settings"]["challenge"]) && $formatedData["policies_settings"]["challenge"] == "on" ? "checked" : ''; ?>>
+                                <label class="form-check-label" for="challenge"> Send Device Intimate E-maill</label>
+                            </div>
+                        </div>
+
+                        <!-- Deny Section -->
+                        <div class="section-container">
+                            <div class="section-title">3. Deny</div>
+                            <div class="section-subtitle">(Deny Score will be presented with critical)</div>
+                            <div class="mb-2">
+                                <div class="risk-text">Critical Risk - Action</div>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="deny" name="deny" <?php echo isset($formatedData["policies_settings"]["deny"]) && $formatedData["policies_settings"]["deny"] == "on" ? "checked" : ''; ?>>
+                                <label class="form-check-label" for="deny">Send Password Reset E-mail</label>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="card">
+                    <div class="card-header">
+                        <h2><span><?php echo Language::_('SensfrxPlugin.Policies.tab2', true); ?></span></h2>
+                    </div>
+                    <div class="card-body">
+                        <span style="padding: 10px 0 0 17px;font-size: 13px;">
+                            <i>Below you can set the sensfrx incident policies. These policies are defined to help the application understand on how to handle sensfrx responses</i>
+                        </span>
+
+                        <!-- Allow Section -->
+                        <div class="section-container">
+                            <div class="section-title">1.Allow ( Transaction )</div>
+                            <div class="section-subtitle">(Medium Score will be presented with high)</div>
+                            <div class="mb-2">
+                                <div class="risk-text">Low Risk - No action</div>
+                                <div class="risk-text">Medium Risk- Action</div>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="transactionAllow" name="transactionAllow" <?php echo isset($formatedData["policies_settings"]["transactionAllow"]) && $formatedData["policies_settings"]["transactionAllow"] == "on" ? "checked" : ''; ?>>
+                                <label class="form-check-label" for="transactionAllow">
+                                    Send Device Approval E-mail
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Challenge Section -->
+                        <div class="section-container">
+                            <div class="section-title">2.Challenge ( Transaction )</div>
+                            <div class="section-subtitle">(Challenge Score will be presented with high)</div>
+                            <div class="mb-2">
+                                <div class="risk-text">High Risk - Action</div>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="transactionChallenge" name="transactionChallenge" <?php echo isset($formatedData["policies_settings"]["transactionChallenge"]) && $formatedData["policies_settings"]["transactionChallenge"] == "on" ? "checked" : ''; ?>>
+                                <label class="form-check-label" for="transactionChallenge">
+                                    Send Device Intimate E-mail
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Deny Section -->
+                        <div class="section-container">
+                            <div class="section-title">3.Deny ( Transaction )</div>
+                            <div class="section-subtitle">(Deny Score will be presented with critical)</div>
+                            <div class="mb-2">
+                                <div class="risk-text">Critical Risk - Action</div>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="transactionDeny" name="transactionDeny" <?php echo isset($formatedData["policies_settings"]["transactionDeny"]) && $formatedData["policies_settings"]["transactionDeny"] == "on" ? "checked" : ''; ?>>
+                                <label class="form-check-label" for="transactionDeny">
+                                    Send Password Reset E-mail
+                                </label>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="card">
+                    <div class="card-header">
+                        <h2><span><?php echo Language::_('SensfrxPlugin.Policies.tab3', true); ?></span></h2>
+                    </div>
+                    <div class="card-body">
+                        <span style="padding: 10px 0 0 17px;font-size: 13px;">
+                            <i>Below you can set the sensfrx incident policies. These policies are defined to help the application understand on how to handle sensfrx responses</i>
+                        </span>
+
+                        <!-- Allow Section -->
+                        <div class="section-container">
+                            <div class="section-title">1.Allow ( Registration )</div>
+                            <div class="section-subtitle">(Medium Score will be presented with high)</div>
+                            <div class="mb-2">
+                                <div class="risk-text">Low Risk - No action</div>
+                                <div class="risk-text">Medium Risk- Action</div>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="registrationAllow" name="registrationAllow" <?php echo isset($formatedData["policies_settings"]["registrationAllow"]) && $formatedData["policies_settings"]["registrationAllow"] == "on" ? "checked" : ''; ?>>
+                                <label class="form-check-label" for="registrationAllow">
+                                    Send Device Approval E-mail
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Challenge Section -->
+                        <div class="section-container">
+                            <div class="section-title">2.Challenge ( Registration )</div>
+                            <div class="section-subtitle">(Challenge Score will be presented with high)</div>
+                            <div class="mb-2">
+                                <div class="risk-text">High Risk - Action</div>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="registrationChallenge" name="registrationChallenge" <?php echo isset($formatedData["policies_settings"]["registrationChallenge"]) && $formatedData["policies_settings"]["registrationChallenge"] == "on" ? "checked" : ''; ?>>
+                                <label class="form-check-label" for="registrationChallenge">
+                                    Send Device Intimate E-mail
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Deny Section -->
+                        <div class="section-container">
+                            <div class="section-title">3.Deny ( Registration )</div>
+                            <div class="section-subtitle">(Deny Score will be presented with critical)</div>
+                            <div class="mb-2">
+                                <div class="risk-text">Critical Risk - Action</div>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="registrationDeny" name="registrationDeny" <?php echo isset($formatedData["policies_settings"]["registrationDeny"]) && $formatedData["policies_settings"]["registrationDeny"] == "on" ? "checked" : ''; ?>>
+                                <label class="form-check-label" for="registrationDeny">
+                                    Send Password Reset E-mail
+                                </label>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="card">
+                    <div class="card-header">
+                        <h2><span><?php echo Language::_('SensfrxPlugin.Policies.tab4', true); ?></span></h2>
+                    </div>
+                    <div class="card-body">
+                        <span style="padding: 10px 0 0 17px;font-size: 13px;">
+                            <i>A webhook is a communication method allowing applications to share real-time data by triggering events and instantly notifying other systems. For instance, imagine a security information and event management (SIEM) system deployed by sensfrx. When the SIEM system detects unusual network activity or a potential security breach, it can trigger a webhook to promptly notify the designated security personnel or an incident response platform. This immediate communication enables swift investigation and mitigation efforts, allowing sensfrx teams to respond in real-time to emerging threats and enhance the overall resilience of the organization's digital infrastructure.</i>
+                        </span>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" name="sensfrx_webhook" class="form-check-input" id="sensfrx_webhook" <?php echo isset($formatedData["policies_settings"]["sensfrx_webhook"]) && $formatedData["policies_settings"]["sensfrx_webhook"] == "on" ? "checked" : ''; ?>>
+                            <label class="form-check-label" for="sensfrx_webhook">Webhook Consent</label>
+                        </div>
+
+                    </div>
+                </div>
+            </li>
+            <div class="default_settings">
+                <div class="section-container">
+                    <div class="section-title">Enable/disable message from client area</div>
+                    <div class="mb-2">
+                        <div class="risk-text">Sensfrx Branding</div>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="clientmsg" name="clientmsg" <?php echo isset($formatedData["policies_settings"]["clientmsg"]) && $formatedData["policies_settings"]["clientmsg"] == "on" ? "checked" : ''; ?>>
+                        <label class="form-check-label" for="clientmsg">Enable/Diable Sensfrx Branding</label>
+                    </div>
+                </div>
+
+                <!-- Shadow Mode Section -->
+                <div class="section-container">
+                    <div class="section-title">Enable/disable shadow mode</div>
+                    <div class="mb-2">
+                        <div class="risk-text">Shadow Mode</div>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="shadow_mode" name="shadow_mode" <?php echo ($shadowMode == "1" ? "checked" : ''); ?>>
+                        <label class="form-check-label" for="shadow_mode"> Enable/Disable Shadow Mode</label>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 float-left">
+                <input type="submit" name="policies_settings" value="Save Policies" class="btn btn-primary">
+            </div>
+        </form>
+    </ul>
+</div>
+
+<script>
+    $(function() {
+
+        var activeIndex = $('.active-tab').index(),
+            $contentlis = $('.tabs-content li'),
+            $tabslis = $('.tabs li');
+
+        /* Show content of active tab on loads */
+        $contentlis.eq(activeIndex).show();
+
+        $('.tabs').on('click', 'li', function(e) {
+            var $current = $(e.currentTarget),
+                index = $current.index();
+
+            $tabslis.removeClass('active-tab');
+            $current.addClass('active-tab');
+            $contentlis.hide().eq(index).show();
+        });
+    });
+</script>

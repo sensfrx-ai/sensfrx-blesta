@@ -1,0 +1,98 @@
+<?php
+// echo "<pre>";
+// print_r($policies);
+// die;
+if (count($assets["stylesheet"]) > 0) :
+    foreach ($assets["stylesheet"] as $key => $css) :
+        echo "<link rel='stylesheet' href='$css'>";
+    endforeach;
+endif;
+
+require __DIR__ . "/default/navbar.pdt";
+?>
+<style>
+    .alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+.alert {
+    position: relative;
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+}
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+</style>
+<?php
+if (isset($resultPrivacyUpdate["result"]) && !empty($resultPrivacyUpdate["result"])) :
+    // echo "<pre>";
+    // print_r($resultPrivacyUpdate);
+    // die;
+    if ($resultPrivacyUpdate["result"]["status"] == "success") :
+?>
+        <div class="alert alert-success" role="alert">
+            <?php echo htmlspecialchars($resultPrivacyUpdate["result"]["message"]); ?>
+        </div>
+    <?php
+
+    else :
+    ?>
+        <div class="alert alert-danger" role="alert">
+            <?php echo htmlspecialchars($resultPrivacyUpdate["result"]["message"]); ?>
+        </div>
+<?php
+        return 0;
+    endif;
+endif;
+?>
+
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
+
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+
+<div class="card">
+    <div class="card-header">
+        <h2><span><?php echo Language::_('SensfrxPlugin.activity.heading', true); ?></span></h2>
+    </div>
+    <div class="card-body">
+        <table id="activity" class="display" style="width:100%">
+            <thead>
+                <tr>
+                    <th><?php echo Language::_('SensfrxPlugin.activity.table.heading1', true); ?></th>
+                    <th><?php echo Language::_('SensfrxPlugin.activity.table.heading2', true); ?></th>
+                    <th><?php echo Language::_('SensfrxPlugin.activity.table.heading3', true); ?></th>
+                    <th><?php echo Language::_('SensfrxPlugin.activity.table.heading4', true); ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php 
+                    foreach($activities as $key => $activity){
+                ?>
+                <tr>
+                    <td><?php echo $key +1 ?></td>
+                    <td><?php echo $activity->sensfrx_log_type; ?></td>
+                    <td><?php echo $activity->sensfrx_log1; ?></td>
+                    <td><?php echo $activity->created_at; ?></td>
+                </tr>
+                <?php
+                    }
+                ?>
+
+            </tbody>
+        
+        </table>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#activity').DataTable();
+
+    })
+</script>

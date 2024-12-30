@@ -1,0 +1,332 @@
+<?php
+
+
+if (count($assets["stylesheet"]) > 0) :
+    foreach ($assets["stylesheet"] as $key => $css) :
+        echo "<link rel='stylesheet' href='$css'>";
+    endforeach;
+endif;
+require __DIR__ . "/default/navbar.pdt";
+?>
+<style>
+    .alert-success {
+        color: #155724;
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+    }
+
+    .alert {
+        position: relative;
+        padding: .75rem 1.25rem;
+        margin-bottom: 1rem;
+        border: 1px solid transparent;
+        border-radius: .25rem;
+    }
+
+    .alert-danger {
+        color: #721c24;
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+    }
+
+    .action-btns {
+        display: flex;
+        justify-content: end;
+        gap: 10px;
+    }
+
+    /* Style for the full-body loader overlay */
+    .loader-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+
+    /* Style for the loading spinner */
+    .spinner {
+        border: 8px solid #f3f3f3;
+        border-top: 8px solid #3498db;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+    }
+
+    div:where(.swal2-icon).swal2-question {
+        border-color: rgb(255 178 190) !important;
+        color: #ff728c !important;
+    }
+
+    /* Animation to rotate the spinner */
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* Initially hide the content until the loader is removed */
+    #content {
+        display: none;
+    }
+</style>
+
+<?php
+
+if (isset($resultPrivacyUpdate["result"]) && !empty($resultPrivacyUpdate["result"])) :
+    if ($resultPrivacyUpdate["result"]["status"] == "success") :
+?>
+        <div class="alert alert-success" role="alert">
+            <?php echo htmlspecialchars($resultPrivacyUpdate["result"]["message"]); ?>
+        </div>
+    <?php
+
+    else :
+    ?>
+        <div class="alert alert-danger" role="alert">
+            <?php echo htmlspecialchars($resultPrivacyUpdate["result"]["message"]); ?>
+        </div>
+<?php
+        return 0;
+    endif;
+endif;
+
+?>
+
+<div id="orderUpdateStatus" class="alert 
+<?php
+    if ($orderResponse["result"]["status"] == "fail") {
+        echo "alert-danger";
+    } else if ($orderResponse["result"]["status"] == "success") {
+        echo "alert-success";
+    } else {
+        echo "";
+    }
+?>" role="alert"
+<?php if (($orderResponse["result"]["status"] != "fail" || $orderResponse["result"]["status"] != "success") && !isset($orderResponse["result"])): ?> style="display: none;" <?php endif; ?>>
+<?php echo htmlspecialchars($orderResponse["result"]["message"]); ?>
+</div>
+
+
+<div id="orderReviewLoader" class="loader-overlay" style="display: none;">
+    <div class="spinner"></div>
+</div>
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+
+
+<div class="card">
+    <div class="card-header">
+        <h2><span><?php echo Language::_('SensfrxPlugin.order.heading', true); ?></span></h2>
+    </div>
+    <div class="card-body">
+        <form action="" method="post" id="orderRequestForm">
+            <div class="action-btns">
+                <input type="hidden" name="submitOrderReviewAll" id="submitOrderReviewAll" value="">
+                <button class="btn btn-success" id="approveOrderBtn" value="approveAll">Approve</button>
+                <button class="btn btn-danger" id="rejectOrderBtn" value="rejectAll">Reject</button>           
+            </div>
+
+            <table id="orderOverview" class="display" style="width:100%">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" id="SelectAll" name="SelectAll" value="SelectAll"></th>
+                        <th><?php echo Language::_('SensfrxPlugin.order.table.heading1', true); ?></th>
+                        <th><?php echo Language::_('SensfrxPlugin.order.table.heading2', true); ?></th>
+                        <th><?php echo Language::_('SensfrxPlugin.order.table.heading3', true); ?></th>
+                        <th><?php echo Language::_('SensfrxPlugin.order.table.heading4', true); ?></th>
+                        <th><?php echo Language::_('SensfrxPlugin.order.table.heading5', true); ?></th>
+                        <th><?php echo Language::_('SensfrxPlugin.order.table.heading6', true); ?></th>
+                        <th><?php echo Language::_('SensfrxPlugin.order.table.heading7', true); ?></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php 
+                        $sr_no = 0;
+                        foreach ($transactionDetails["data"] as $key => $item) : 
+                        $sr_no++;
+                    ?>
+                        <tr>
+                            <td><input type="checkbox" class="Select" name="Select_transId@@<?php echo $item['transaction_id']; ?>" value="<?php echo $item['transaction_id']; ?>"></td>
+                            <td><?php echo $sr_no; ?></td>
+                            <td><?php echo $item["order_id"]; ?></td>
+                            <td><?php echo $item["email"]; ?></td>
+                            <td><?php echo $item["transaction_score"]; ?></td>
+                            <td><?php echo date('d-M-Y h:i A', strtotime($item['event_time'])); ?></td>
+                            <td><a href="<?php echo $item['link']; ?>" target="_blank">View Detail</a></td>
+                            <td>
+                                <button class="btn btn-success accept-reject-order" data-trans_id="<?php echo $item['transaction_id']; ?>" data-action="approve">Approve</button>
+                                <button class="btn btn-danger accept-reject-order" data-trans_id="<?php echo $item['transaction_id']; ?>" data-action="reject">Reject</button>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $(".accept-reject-order").click(function(e) {
+            e.preventDefault();
+            trans_id = $(this).data("trans_id");
+            action = $(this).data("action");
+
+            let swalTitle = '';
+            let swalText = '';
+            let swalIcon = '';
+
+            if (action === 'approve') {
+                swalTitle = 'Are you sure?';
+                swalText = 'Once approved, the orders will be processed.';
+                swalIcon = 'question';
+            } else if (action === 'reject') {
+                swalTitle = 'Are you sure?';
+                swalText = 'Once rejected, the orders will be canceled.';
+                swalIcon = 'warning';
+            }
+
+            Swal.fire({
+                title: swalTitle,
+                text: swalText,
+                icon: swalIcon,
+                showCancelButton: true,
+                confirmButtonText: 'Yes, proceed!',
+                cancelButtonText: 'No, cancel',
+                reverseButtons: true,
+                customClass: {
+                    confirmButton: 'swal-button-red'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    jQuery.ajax({
+                        type: "POST",
+                        url: "",
+                        dataType: "json",
+                        data: {
+                            "AjaxCheck": "aprove/Reject",
+                            "action": action,
+                            "trans_id": trans_id
+                        },
+                        beforeSend: function() {
+                            $('#orderReviewLoader').show();
+                        },
+                        success: function(response) {
+                            if (response.length !== 0) {
+                                if (response["result"]["status"] == "success") {
+                                    $("#orderUpdateStatus").removeClass("alert-danger")
+                                    $("#orderUpdateStatus").addClass("alert-success");
+                                } else if (response["result"]["status"] == "fail") {
+                                    $("#orderUpdateStatus").addClass("alert-danger")
+                                    $("#orderUpdateStatus").removeClass("alert-success");
+                                } else {
+                                    $("#orderUpdateStatus").removeClass("alert-danger");
+                                    $("#orderUpdateStatus").removeClass("alert-success");
+                                    $("#orderUpdateStatus").hide();
+                                }
+
+                                $("#orderUpdateStatus").text(response["result"]["message"]);
+                                $("#orderUpdateStatus").show();
+
+                                setTimeout(function() {
+                                    location.reload();
+                                }, 3000);
+                                console.log(response);
+                            }
+                        },
+                        complete: function() {
+                            $('#orderReviewLoader').hide();
+                        }
+                    });
+                }
+            });
+        });
+
+        /* Approve button click event */
+        $("#approveOrderBtn").click(function(e) {
+            e.preventDefault();
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Once approved, the orders will be processed.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, approve!',
+                cancelButtonText: 'No, cancel',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $("#submitOrderReviewAll").val('approveAll');
+                    $("#orderRequestForm").submit(); /* Assuming the form is the parent form */
+                }
+            });
+        });
+
+        /* Reject button click event */
+        $("#rejectOrderBtn").click(function(e) {
+            e.preventDefault();
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Once rejected, the orders will be canceled.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, reject!',
+                cancelButtonText: 'No, cancel',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $("#submitOrderReviewAll").val('rejectAll');
+                    $("#orderRequestForm").submit(); /* Assuming the form is the parent form */
+                }
+            });
+        });
+
+
+        $('#orderOverview').DataTable({
+            columnDefs: [{
+                targets: 0,
+                orderable: false
+            }]
+        });
+        $('#SelectAll').click(function() {
+            if ($(this).prop('checked')) {
+                $('.Select').prop('checked', true);
+            } else {
+                $('.Select').prop('checked', false);
+            }
+        });
+
+        $('.Select').click(function() {
+            if ($('.Select:checked').length !== $('.Select').length) {
+                $('#SelectAll').prop('checked', false);
+            } else {
+                $('#SelectAll').prop('checked', true);
+            }
+        });
+
+        function getSelectedValues() {
+            var selectedValues = [];
+            $('.Select:checked').each(function() {
+                selectedValues.push($(this).val());
+            });
+            console.log(selectedValues);
+        }
+
+        $('#getSelectedBtn').click(function() {
+            getSelectedValues();
+        });
+    });
+</script>

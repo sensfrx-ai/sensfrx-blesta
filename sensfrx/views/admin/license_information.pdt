@@ -1,0 +1,226 @@
+<?php
+// echo "<pre>";
+// print_r($policies);
+// die;
+if (count($assets["stylesheet"]) > 0) :
+    foreach ($assets["stylesheet"] as $key => $css) :
+        echo "<link rel='stylesheet' href='$css'>";
+    endforeach;
+endif;
+
+require __DIR__ . "/default/navbar.pdt";
+?>
+
+
+<style>
+    /* General container styling */
+    body {
+        font-family: 'Arial', sans-serif;
+        background: #f0f4f8;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* .container {
+        max-width: 700px;
+        margin: 40px auto;
+        padding: 30px;
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    } */
+
+    /* Header styling */
+    /* h2 {
+        text-align: center;
+        color: #333;
+        font-size: 2rem;
+        margin-bottom: 20px;
+    } */
+
+    /* Table styling */
+    /* .info-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    } */
+
+    /* .info-table th,
+    .info-table td {
+        padding: 15px;
+        border: 1px solid #ddd;
+        text-align: left;
+    } */
+
+    /* .info-table th {
+        background-color: #4183bf;
+        color: #fff;
+        font-weight: bold;
+    }
+
+    .info-table td {
+        background-color: #f9f9f9;
+        color: #555;
+    } */
+
+    /* .info-table tr:nth-child(even) td {
+        background-color: #f2f2f2;
+    }
+
+    .info-table td {
+        font-size: 1.1rem;
+    } */
+
+    /* Hover effect for table rows */
+    /* .info-table tr:hover {
+        background-color: #e6f7ff;
+    } */
+
+    /* Note section styling */
+    /* .sensfrx-common-G-L-P-info-item {
+        background-color: #f7f7f7;
+        padding: 15px;
+        margin-top: 30px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        font-size: 1rem;
+        color: #555;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .sensfrx-custom-div {
+        font-size: 1rem;
+    }
+
+    .sensfrx-license-eamil-print {
+        color: #007BFF;
+        text-decoration: none;
+    }
+
+    .sensfrx-license-eamil-print:hover {
+        text-decoration: underline;
+    }
+
+    .alert-success {
+        color: #155724;
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+    }
+
+    .alert {
+        position: relative;
+        padding: .75rem 1.25rem;
+        margin-bottom: 1rem;
+        border: 1px solid transparent;
+        border-radius: .25rem;
+    }
+
+    .alert-danger {
+        color: #721c24;
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+    } */
+
+    /* Responsive Design */
+    /* @media (max-width: 768px) {
+        .container {
+            padding: 20px;
+            margin: 20px;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+        }
+
+        .info-table td,
+        .info-table th {
+            font-size: 1rem;
+            padding: 10px;
+        }
+
+        .sensfrx-common-G-L-P-info-item {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .sensfrx-common-G-L-P-info-item span {
+            margin-bottom: 10px;
+        }
+    } */
+</style>
+
+<?php
+if (isset($resultPrivacyUpdate["result"]) && !empty($resultPrivacyUpdate["result"])) :
+    // echo "<pre>";
+    // print_r($resultPrivacyUpdate);
+    // die;
+    if ($resultPrivacyUpdate["result"]["status"] == "success") :
+?>
+<div class="alert alert-success" role="alert">
+    <?php echo htmlspecialchars($resultPrivacyUpdate["result"]["message"]); ?>
+</div>
+<?php
+
+    else :
+    ?>
+<div class="alert alert-danger" role="alert">
+    <?php echo htmlspecialchars($resultPrivacyUpdate["result"]["message"]); ?>
+</div>
+<?php
+        return 0;
+    endif;
+endif;
+?>
+<div class="container license_information">
+    <h2><?php echo Language::_('SensfrxPlugin.license.heading', true); ?></h2>
+
+    <!-- Display the resultlicenceData data in a table -->
+    <table class="info-table">
+        <tr>
+            <th><?php echo Language::_('SensfrxPlugin.license.heading1', true); ?></th>
+            <th><?php echo Language::_('SensfrxPlugin.license.heading2', true); ?></th>
+        </tr>
+        <tr>
+            <td><?php echo Language::_('SensfrxPlugin.license.heading4', true); ?></td>
+            <td>
+                <?php echo $resultlicenceData['result']['data']['plan']; ?>
+            </td>
+        </tr>
+        <tr>
+            <td><?php echo Language::_('SensfrxPlugin.license.heading5', true); ?></td>
+            <td>
+                <?php echo $resultlicenceData['result']['data']['available_credit']; ?>
+            </td>
+        </tr>
+        <tr>
+            <td><?php echo Language::_('SensfrxPlugin.license.heading6', true); ?></td>
+            <td>
+                <?php echo $resultlicenceData['result']['data']['start_date']; ?>
+            </td>
+        </tr>
+        <tr>
+            <td><?php echo Language::_('SensfrxPlugin.license.heading7', true); ?></td>
+            <td>
+                <?php echo $resultlicenceData['result']['data']['renewal']; ?>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="license-information-subscription">
+    <div class="container">
+        <div class="sensfrx-common-G-L-P-info-item sensfrx-license-div-api-fetch">
+            <span class="info-label">
+                <div class="sensfrx-custom-div"><?php echo Language::_('SensfrxPlugin.license.heading8', true); ?></div>
+            </span>
+            <span class="info-value">
+                <div class="sensfrx-custom-div"><?php echo Language::_('SensfrxPlugin.license.heading9', true); ?> <a href="mailto:info@sensfrx.ai"
+                        class="sensfrx-license-eamil-print"><?php echo Language::_('SensfrxPlugin.license.heading10', true); ?></a></div>
+            </span>
+        </div>
+
+    </div>
+
+</div>

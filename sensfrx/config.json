@@ -1,0 +1,11 @@
+{
+    "version": "1.0.0",
+    "name": "SensfrxPlugin.name",
+    "description": "SensfrxPlugin.description",
+    "authors": [
+        {
+            "name": "Sensfrx new",
+            "url": "https://sensfrx.ai/"
+        }
+    ]
+}

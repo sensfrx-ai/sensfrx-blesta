@@ -1,0 +1,320 @@
+<?php
+
+if (isset($assets["stylesheet"]) && count($assets["stylesheet"]) > 0) :
+    foreach ($assets["stylesheet"] as $css) :
+        echo "<link rel='stylesheet' href='" . htmlspecialchars($css) . "'>";
+    endforeach;
+endif;
+
+require __DIR__ . "/default/navbar.pdt";
+?>
+
+<div class="common_box_content">
+
+
+    <?php
+    // echo "<pre>";
+    // print_r($responseMessage);
+    // die;
+    if (isset($responseMessage) && !empty($responseMessage)) :
+        if ($responseMessage["status"] == "success") :
+            ?>
+    <div class="alert alert-success" role="alert">
+        <?php echo htmlspecialchars($responseMessage["message"]); ?>
+    </div>
+    <?php
+        else :
+            ?>
+    <div class="alert alert-danger" role="alert">
+        <?php echo htmlspecialchars($responseMessage["message"]); ?>
+    </div>
+    <?php
+            return 0;
+        endif;
+    endif;
+    ?>
+    <!-- <button class="sensfrx-profile-edit-button" id="editButton">
+        <?php echo Language::_('SensfrxPlugin.profile_info.heading', true); ?>
+    </button> -->
+
+    <div id="popupForm" class="popup-form">
+        <form class="profile-form" id="editForm" method="POST" action="" style="display:block;">
+            <h2 class="form-heading">
+                <?php echo Language::_('SensfrxPlugin.profile_info.heading1', true); ?>
+            </h2>
+
+            <!-- Name Field -->
+            <div class="form-group">
+                <label for="name" class="form-label">
+                    <?php echo Language::_('SensfrxPlugin.profile_info.heading2', true); ?>
+                </label>
+                <input type="text" name="name" id="name" value="<?php echo $result_Profile["result"]["data"]["fname"]
+                    . " " . $result_Profile["result"]["data"]["lname"]; ?>" class="form-input" required>
+                <p class="form-description">
+                    <?php echo Language::_('SensfrxPlugin.profile_info.heading3', true); ?>
+                </p>
+            </div>
+
+            <!-- Sex Field -->
+            <div class="form-group">
+                <label class="form-label">
+                    <?php echo Language::_('SensfrxPlugin.profile_info.heading4', true); ?>
+                </label>
+                <div class="gender-options">
+                    <label class="gender-label">
+                        <input type="radio" name="sex" value="m" <?php echo
+                            ($result_Profile["result"]["data"]["sex"]=='m' ) ? 'checked' : '' ; ?> class="gender-radio">
+                        <?php echo Language::_('SensfrxPlugin.profile_info.heading5', true); ?>
+                    </label>
+                    <label class="gender-label">
+                        <input type="radio" name="sex" value="f" <?php echo
+                            ($result_Profile["result"]["data"]["sex"]=='f' ) ? 'checked' : '' ; ?> class="gender-radio">
+                        <?php echo Language::_('SensfrxPlugin.profile_info.heading6', true); ?>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Email Field -->
+            <div class="form-group">
+                <label for="email" class="form-label">
+                    <?php echo Language::_('SensfrxPlugin.profile_info.heading7', true); ?>
+                </label>
+                <input type="email" name="email" id="email" value="<?php echo $result_Profile["result"]["data"]["email"]; ?>" class="form-input" required>
+            </div>
+
+            <!-- Phone Field -->
+            <div class="form-group">
+                <label for="phone" class="form-label">
+                    <?php echo Language::_('SensfrxPlugin.profile_info.heading8', true); ?>
+                </label>
+                <input type="tel" name="phone" id="phone" value="<?php echo $result_Profile["result"]["data"]["phone"];
+                    ?>" class="form-input" required>
+            </div>
+
+            <!-- Timezone Field -->
+            <div class="form-group">
+                <label for="timezone" class="form-label">
+                    <?php echo Language::_('SensfrxPlugin.profile_info.heading9', true); ?>
+                </label>
+                <select id="timezone" name="timezone" class="form-select">
+                    <?php
+                $timezones = timezone_identifiers_list(2047);
+                $selectedTimezone = isset($result_Profile["result"]["data"]['timezone']) ? $result_Profile["result"]["data"]["timezone"] : "";
+                foreach ($timezones as $tz) {
+                    $selected = ($tz == $selectedTimezone) ? "selected" : "";
+                    echo "<option value='$tz' $selected>$tz</option>";
+                }
+                ?>
+                </select>
+            </div>
+
+            <!-- Brand Name Field -->
+            <div class="form-group">
+                <label for="brand_name" class="form-label">
+                    <?php echo Language::_('SensfrxPlugin.profile_info.heading10', true); ?>
+                </label>
+                <input type="text" name="brand_name" id="brand_name" value="<?php echo $result_Profile["result"]["data"]['brand_name']; ?>" class="form-input" required>
+            </div>
+
+            <!-- Brand URL Field -->
+            <div class="form-group">
+                <label for="brand_url" class="form-label">
+                    <?php echo Language::_('SensfrxPlugin.profile_info.heading11', true); ?>
+                </label>
+                <input type="url" name="brand_url" id="brand_url" value="<?php echo $result_Profile["result"]["data"]['brand_url']; ?>" class="form-input" required>
+            </div>
+
+            <!-- Organization Name Field -->
+            <div class="form-group">
+                <label for="org_name" class="form-label">
+                    <?php echo Language::_('SensfrxPlugin.profile_info.heading12', true); ?>
+                </label>
+                <input type="text" name="org_name" id="org_name" value="<?php echo $result_Profile["result"]["data"]['org_name']; ?>" class="form-input" required>
+            </div>
+
+            <!-- Error Message -->
+            <div class="error-message" id="errorMessage">
+                <?php echo Language::_('SensfrxPlugin.profile_info.heading13', true); ?>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-actions">
+                <button type="submit" id="submitform" onclick="validateForm()" class="btn btn-submit">
+                    <?php echo Language::_('SensfrxPlugin.profile_info.heading14', true); ?>
+                </button>
+                <button type="button" onclick="closeForm()" class="btn btn-cancel">
+                    <?php echo Language::_('SensfrxPlugin.profile_info.heading15', true); ?>
+                </button>
+            </div>
+        </form>
+    </div>
+
+
+    <div class="my-4">
+        <div class="card mt-5 profile-card-info">
+            <div class="card-header">
+                <?php echo Language::_('SensfrxPlugin.profile_info.heading16', true); ?>
+                <button class="sensfrx-profile-edit-button" id="editButton">
+                    <?php echo Language::_('SensfrxPlugin.profile_info.heading', true); ?>
+                </button>
+
+            </div>
+            <div class="card-body">
+
+                <div class="form-group row">
+                    <label for="clientId" class="col-lg-6 col-form-label">
+                        <?php echo Language::_('SensfrxPlugin.profile_info.heading17', true); ?>
+                    </label>
+                    <div class="col-lg-6 mt-2">
+                        <?php echo $result_Profile["result"]["data"]["fname"] . " " . $result_Profile["result"]["data"]["lname"] ?>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="clientId" class="col-lg-6 col-form-label">
+                        <?php echo Language::_('SensfrxPlugin.profile_info.heading18', true); ?>
+                    </label>
+                    <div class="col-lg-6 mt-2">
+                        <?php echo ($result_Profile["result"]["data"]["sex"] == '') ? "--" : (($result_Profile["result"]["data"]["sex"] == 'm') ? 'Male' : 'Female'); ?>
+
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="clientId" class="col-lg-6 col-form-label">
+                        <?php echo Language::_('SensfrxPlugin.profile_info.heading19', true); ?>
+                    </label>
+                    <div class="col-lg-6 mt-2">
+                        <?php echo $result_Profile["result"]["data"]["email"] ?>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="clientId" class="col-lg-6 col-form-label">
+                        <?php echo Language::_('SensfrxPlugin.profile_info.heading20', true); ?>
+                    </label>
+                    <div class="col-lg-6 mt-2">
+                        <?php echo $result_Profile["result"]["data"]["phone"] ?>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="clientId" class="col-lg-6 col-form-label">
+                        <?php echo Language::_('SensfrxPlugin.profile_info.heading21', true); ?>
+                    </label>
+                    <div class="col-lg-6 mt-2">
+                        <?php echo $result_Profile["result"]["data"]["timezone"] ?>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="clientId" class="col-lg-6 col-form-label">
+                        <?php echo Language::_('SensfrxPlugin.profile_info.heading22', true); ?>
+                    </label>
+                    <div class="col-lg-6 mt-2">
+                        <?php echo ($result_Profile["result"]["data"]["brand_name"] == '') ? "--" : $result_Profile["result"]["data"]["brand_name"] ?>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="clientId" class="col-lg-6 col-form-label">
+                        <?php echo Language::_('SensfrxPlugin.profile_info.heading23', true); ?>
+                    </label>
+                    <div class="col-lg-6 mt-2">
+                        <?php echo ($result_Profile["result"]["data"]["brand_url"] == '') ? "--" : $result_Profile["result"]["data"]["brand_url"] ?>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="clientId" class="col-lg-6 col-form-label">
+                        <?php echo Language::_('SensfrxPlugin.profile_info.heading24', true); ?>
+                    </label>
+                    <div class="col-lg-6 mt-2">
+                        <?php echo ($result_Profile["result"]["data"]["org_name"] == '') ? "--" : $result_Profile["result"]["data"]["org_name"] ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<script>
+    if ( window.history.replaceState ) { 
+        window.history.replaceState( null, null, window.location.href ); 
+    }
+    $(document).ready(function () {
+        // Open the pop-up when the "Edit" button is clicked
+        $('#editButton').on('click', function () {
+            $('#popupForm').removeClass('closed').addClass('open').fadeIn();
+        });
+
+        // Close the pop-up when the "Cancel" button is clicked
+        $('.btn-cancel').on('click', function () {
+            $('#popupForm').removeClass('open').addClass('closed').fadeOut(300);
+        });
+
+        // Optional: Close the form if the user clicks outside the pop-up
+        $(window).on('click', function (event) {
+            if ($(event.target).is('#popupForm')) {
+                $('#popupForm').removeClass('open').addClass('closed').fadeOut(300);
+            }
+        });
+    });
+
+
+    function Profile(submitButton) {
+        jQuery.ajax({
+            type: "POST",
+            url: "",
+            data: {
+                "AjaxCheck": "editDetails"
+            },
+            beforeSend: function () { },
+            success: function (response) {
+                console.log(response);
+            },
+            complete: function () {
+
+            }
+        });
+
+    }
+
+    function validateForm() {
+        // Get values using jQuery
+        var name = $('#name').val();
+        var selectedSex = $('input[name="sex"]:checked').val();
+        var email = $('#emaile').val();
+        var phone = $('#phone').val();
+        var brandName = $('#brand_name').val();
+        var brandUrl = $('#brand_url').val();
+        var orgName = $('#org_name').val();
+        var timezone = $('#timezone').val();
+        var submitButton = $('#submitform');
+
+        // Check if any required field is empty
+        if (name === "" || email === "" || selectedSex === "" || phone === "" || brandName === "" || brandUrl === "" || orgName === "" || timezone === "") {
+            $('#errorMessage').show(); // Show error message
+            return false; // Prevent form submission
+        } else {
+            Profile(submitButton); // Call Profile function
+            return true; // Allow form submission if all fields are filled
+        }
+    }
+
+    function closeForm() {
+        const editForm = document.getElementById('editForm');
+        const editButton = document.getElementById('editButton');
+        const submitButton = document.querySelector('.sensfrx-profile-submit-button');
+        const formLine = document.querySelector('.sensfrx-profile-bold-line');
+
+        editForm.style.display = 'none'; // Hide the edit form
+        editButton.style.display = 'block'; // Show the edit button
+        submitButton.style.display = 'none'; // Hide the submit button
+        formLine.style.display = 'none'; // Hide the line with the form
+    }
+
+    // JavaScript function to close the form (example)
+    function closeForm() {
+        document.getElementById('editForm').reset(); // Optionally reset the form
+        // Optionally, hide the form or navigate elsewhere
+    }
+</script>

@@ -1,0 +1,486 @@
+<?php
+
+if (count($assets["stylesheet"]) > 0) :
+    foreach ($assets["stylesheet"] as $key => $css) :
+        echo "<link rel='stylesheet' href='$css'>";
+    endforeach;
+endif;
+require __DIR__ . "/default/navbar.pdt";
+?>
+<style>
+    /* General Styles */
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f7f8fa;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        line-height: 1.6;
+    }
+
+    /* Style for the full-body loader overlay */
+    .loader-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        /* Semi-transparent black background */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        /* Makes sure the loader is on top of everything else */
+    }
+
+    /* Style for the loading spinner */
+    .spinner {
+        border: 8px solid #f3f3f3;
+        /* Light gray border */
+        border-top: 8px solid #3498db;
+        /* Blue color for the spinning part */
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        /* Spinner animation */
+    }
+
+    /* Animation to rotate the spinner */
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .decline {
+        color: #f44336;
+    }
+
+    /* Initially hide the content until the loader is removed */
+    #content {
+        display: none;
+    }
+</style>
+<?php
+if (isset($resultPrivacyUpdate["result"]) && !empty($resultPrivacyUpdate["result"])) :
+    if ($resultPrivacyUpdate["result"]["status"] == "success") :
+?>
+        <div class="alert alert-success" role="alert">
+            <?php echo htmlspecialchars($resultPrivacyUpdate["result"]["message"]); ?>
+        </div>
+    <?php
+    else :
+    ?>
+        <div class="alert alert-danger" role="alert">
+            <?php echo ($resultPrivacyUpdate["result"]["message"]); ?>
+        </div>
+<?php
+        return 0;
+    endif;
+endif;
+?>
+<div id="dashboardLoader" class="loader-overlay" style="display: none;">
+    <div class="spinner"></div>
+</div>
+<div id="tab-1" class="tab-content">
+    <h3 class="section-title"><?php echo Language::_('SensfrxPlugin.general.heading', true); ?></h3>
+
+    <div class="general-information-container">
+        <div class="general-information-box">
+            <h4 class=" section-heading"><?php echo Language::_('SensfrxPlugin.general.heading1', true); ?></h4>
+            <div class="text-and-dropdown">
+                <!-- Dropdown at the right corner -->
+                <div class="dropdown">
+                    <form action="" id="dateFormDashboard" method="post">
+                        <select name="date-dropdown" class="dropdown-select" id="date_dashboard">
+                            <option value="filter-7" <?php echo ($selected_value == 'filter-7') ? 'selected' : ''; ?>>Last 7 Day's</option>
+                            <option value="filter-30" <?php echo ($selected_value == 'filter-30') ? 'selected' : ''; ?>>Last 30 Day's</option>
+                            <option value="filter-365" <?php echo ($selected_value == 'filter-365') ? 'selected' : ''; ?>>Last Year</option>
+                        </select>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-box-container">
+            <div class="stat-card" id="Total_ATO_c">
+                <div class="stat-value">
+                    <?php echo (isset($result_ato["t_count"]) ? $result_ato["t_count"] : "No Data Available Yet") ?>
+                </div>
+                <div class="stat-label"><?php echo Language::_('SensfrxPlugin.general.heading2', true); ?></div>
+                <div class="stat-change">
+
+                    <div class="stat-percent">
+                        <?php
+                        if ($result_ato["t_change"] == "NaN" || !isset($result_ato["t_change"])) {
+                            echo "<span id=\"ATO_total_change\">00.00% </span>";
+                        } elseif (str_contains($result_ato["t_change"], "-")) {
+                            echo "<span id=\"ATO_total_change\" class=\"decline\">" . $result_ato["t_change"] . "%</span>";
+                        } else {
+                            echo "<span id=\"ATO_total_change\">+" . $result_ato["t_change"] . "%</span> ";
+                        }
+
+                        ?>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card" id="Total_ATO_d">
+                <div class="stat-value">
+                    <?php echo (isset($result_ato["d_count"]) ? $result_ato["d_count"] : "No Data Available Yet") ?>
+                </div>
+                <div class="stat-label"><?php echo Language::_('SensfrxPlugin.general.heading3', true); ?></div>
+                <div class="stat-change">
+
+                    <div class="stat-percent">
+                        <?php
+                        if ($result_ato["d_change"] == "NaN" || !isset($result_ato["d_change"])) {
+                            echo "<span id=\"ATO_total_d_change\">00.00% </span> ";
+                        } elseif (str_contains($result_ato["d_change"], "-")) {
+                            echo "<span id=\"ATO_total_d_change\" class=\"decline\">" . $result_ato["d_change"] . "%</span>";
+                        } else {
+                            echo "<span id=\"ATO_total_d_change\">+" . $result_ato["d_change"] . "%</span> ";
+                        }
+                        ?>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card" id="Total_ATO_chall">
+                <div class="stat-value">
+                    <?php echo (isset($result_ato["c_count"]) ? $result_ato["c_count"] : "No Data Available Yet") ?>
+                </div>
+                <div class="stat-label"><?php echo Language::_('SensfrxPlugin.general.heading4', true); ?></div>
+                <div class="stat-change">
+
+                    <div class="stat-percent"><i class="stat-arrow"></i>
+                        <?php
+                        if ($result_ato["c_change"] == "NaN" || !isset($result_ato["c_change"])) {
+                            echo "<span id=\"Total_ATO_chall_change\">00.00%</span> ";
+                        } elseif (str_contains($result_ato["c_change"], "-")) {
+                            echo "<span id=\"Total_ATO_chall_change\" class=\"decline\">" . $result_ato["c_change"] . "%</span>";
+                        } else {
+                            echo "<span id=\"Total_ATO_chall_change\">+" . $result_ato["c_change"] . "%</span> ";
+                        }
+                        ?>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card" id="Total_ATO_a">
+                <div class="stat-value">
+                    <?php echo (isset($result_ato["a_count"]) ? $result_ato["a_count"] : "No Data Available Yet") ?>
+                </div>
+                <div class="stat-label"><?php echo Language::_('SensfrxPlugin.general.heading5', true); ?></div>
+                <div class="stat-change">
+
+                    <div class="stat-percent">
+                        <?php
+                        if ($result_ato["d_change"] == "NaN" || !isset($result_ato["d_change"])) {
+                            echo "<span id=\"Total_ATO_a_change\">00.00% </span> ";
+                        } elseif (str_contains($result_ato["d_change"], "-")) {
+                            echo "<span id=\"Total_ATO_a_change\" class=\"decline\">" . $result_ato["d_change"] . "%</span>";
+                        } else {
+                            echo "<span id=\"Total_ATO_a_change\">+" . $result_ato["d_change"] . "%</span> ";
+                        }
+                        ?>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="general-information-container" id="top-margin">
+        <h4 class="section-heading"><?php echo Language::_('SensfrxPlugin.general.heading6', true); ?></h4>
+        <div class="stats-box-container">
+            <div class="stat-card" id="Total_c">
+                <div class="stat-value">
+                    <?php echo (isset($result_trans["t_count"]) ? $result_trans["t_count"] : "No Data Available Yet") ?>
+                </div>
+                <div class="stat-label"><?php echo Language::_('SensfrxPlugin.general.heading7', true); ?></div>
+                <div class="stat-change">
+
+                    <div class="stat-percent">
+                        <?php
+                        if ($result_trans["t_change"] == "NaN" || !isset($result_trans["t_change"])) {
+                            echo "<span id=\"Total_c_change\">00.00% </span> ";
+                        } elseif (str_contains($result_trans["t_change"], "-")) {
+                            echo "<span id=\"Total_c_change\" class=\"decline\">" . $result_trans["t_change"] . "%</span>";
+                        } else {
+                            echo "<span id=\"Total_c_change\">+" . $result_trans["t_change"] . "%</span> ";
+                        }
+                        ?>
+
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card" id="Total_d">
+                <div class="stat-value">
+                    <?php echo (isset($result_trans["d_count"]) ? $result_trans["d_count"] : "No Data Available Yet") ?>
+                </div>
+                <div class="stat-label"><?php echo Language::_('SensfrxPlugin.general.heading8', true); ?></div>
+                <div class="stat-change">
+
+                    <div class="stat-percent">
+                        <?php
+                        if ($result_trans["d_change"] == "NaN" || !isset($result_trans["d_change"])) {
+                            echo "<span id=\"Total_d_change\">00.00% </span> ";
+                        } elseif (str_contains($result_trans["d_change"], "-")) {
+                            echo "<span id=\"Total_d_change\" class=\"decline\">" . $result_trans["d_change"] . "%</span>";
+                        } else {
+                            echo "<span id=\"Total_d_change\">+" . $result_trans["d_change"] . "%</span> ";
+                        }
+                        ?>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card" id="Total_chall">
+                <div class="stat-value">
+                    <?php echo (isset($result_trans["c_count"]) ? $result_trans["c_count"] : "No Data Available Yet") ?>
+                </div>
+                <div class="stat-label"><?php echo Language::_('SensfrxPlugin.general.heading9', true); ?></div>
+                <div class="stat-change">
+
+                    <div class="stat-percent"><i class="stat-arrow"></i>
+                        <?php
+                        if ($result_trans["c_change"] == "NaN" || !isset($result_trans["c_change"])) {
+                            echo "<span id=\"Total_chall_change\">00.00% </span> ";
+                        } elseif (str_contains($result_trans["c_change"], "-")) {
+                            echo "<span id=\"Total_chall_change\" class=\"decline\">" . $result_trans["c_change"] . "%</span>";
+                        } else {
+                            echo "<span id=\"Total_chall_change\">+" . $result_trans["c_change"] . "%</span> ";
+                        }
+                        ?>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card" id="Total_a">
+                <div class="stat-value">
+                    <?php echo (isset($result_trans["a_count"]) ? $result_trans["a_count"] : "No Data Available Yet") ?>
+                </div>
+                <div class="stat-label"><?php echo Language::_('SensfrxPlugin.general.heading10', true); ?></div>
+                <div class="stat-change">
+
+                    <div class="stat-percent">
+                        <?php
+                        if ($result_trans["a_change"] == "NaN" || !isset($result_trans["a_change"])) {
+                            echo "<span id=\"Total_a_change\">00.00% </span> ";
+                        } elseif (str_contains($result_trans["a_change"], "-")) {
+                            echo "<span id=\"Total_a_change\" class=\"decline\">" . $result_trans["a_change"] . "%</span>";
+                        } else {
+                            echo "<span id=\"Total_a_change\">+" . $result_trans["a_change"] . "%</span> ";
+                        }
+                        ?>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="general-information-container" id="top-margin">
+        <h4 class="section-heading"><?php echo Language::_('SensfrxPlugin.general.heading11', true); ?></h4>
+        <div class="stats-box-container">
+            <div class="stat-card" id="reg_Total_c">
+                <div class="stat-value">
+                    <?php echo (isset($result_reg["t_count"]) ? $result_reg["t_count"] : "No Data Available Yet") ?>
+                </div>
+                <div class="stat-label"><?php echo Language::_('SensfrxPlugin.general.heading12', true); ?></div>
+                <div class="stat-change">
+
+                    <div class="stat-percent">
+                        <?php
+                        if ($result_reg["t_change"] == "NaN" || !isset($result_reg["t_change"])) {
+                            echo "<span id=\"reg_Total_c_change\">00.00% </span> ";
+                        } elseif (str_contains($result_reg["t_change"], "-")) {
+                            echo "<span id=\"reg_Total_c_change\" class=\"decline\">" . $result_reg["t_change"] . "%</span>";
+                        } else {
+                            echo "<span id=\"reg_Total_c_change\">+" . $result_reg["t_change"] . "%</span> ";
+                        }
+                        ?>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card" id="reg_Total_d">
+                <div class="stat-value">
+                    <?php echo (isset($result_reg["d_count"]) ? $result_reg["d_count"] : "No Data Available Yet") ?>
+                </div>
+                <div class="stat-label"><?php echo Language::_('SensfrxPlugin.general.heading13', true); ?></div>
+                <div class="stat-change">
+
+                    <div class="stat-percent">
+                        <?php
+                        if ($result_reg["d_change"] == "NaN" || !isset($result_reg["d_change"])) {
+                            echo "<span id=\"reg_Total_d_change\">00.00% </span> ";
+                        } elseif (str_contains($result_reg["d_change"], "-")) {
+                            echo "<span id=\"reg_Total_d_change\" class=\"decline\">" . $result_reg["d_change"] . "%</span>";
+                        } else {
+                            echo "<span id=\"reg_Total_d_change\">+" . $result_reg["d_change"] . "%</span> ";
+                        }
+                        ?>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card" id="reg_Total_chall">
+                <div class="stat-value">
+                    <?php echo (isset($result_reg["c_count"]) ? $result_reg["c_count"] : "No Data Available Yet") ?>
+                </div>
+                <div class="stat-label"><?php echo Language::_('SensfrxPlugin.general.heading14', true); ?></div>
+                <div class="stat-change">
+
+                    <div class="stat-percent">
+                        <?php
+                        if ($result_reg["c_change"] == "NaN" || !isset($result_reg["c_change"])) {
+                            echo "<span id=\"reg_Total_chall_change\">00.00% </span> ";
+                        } elseif (str_contains($result_reg["c_change"], "-")) {
+                            echo "<span id=\"reg_Total_chall_change\" class=\"decline\">" . $result_reg["c_change"] . "%</span>";
+                        } else {
+                            echo "<span id=\"reg_Total_chall_change\">+" . $result_reg["c_change"] . "%</span> ";
+                        }
+                        ?>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card" id="reg_Total_a">
+                <div class="stat-value">
+                    <?php echo (isset($result_reg["a_count"]) ? $result_reg["a_count"] : "No Data Available Yet") ?>
+                </div>
+                <div class="stat-label"><?php echo Language::_('SensfrxPlugin.general.heading15', true); ?></div>
+                <div class="stat-change">
+
+                    <div class="stat-percent">
+                        <?php
+                        if ($result_reg["a_change"] == "NaN" || !isset($result_reg["a_change"])) {
+                            echo "<span id=\"reg_Total_a_change\">00.00% </span> ";
+                        } elseif (str_contains($result_reg["a_change"], "-")) {
+                            echo "<span id=\"reg_Total_a_change\" class=\"decline\">" . $result_reg["a_change"] . "%</span>";
+                        } else {
+                            echo "<span id=\"reg_Total_a_change\">+" . $result_reg["a_change"] . "%</span> ";
+                        }
+                        ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="call-to-action">
+        <div class="container">
+            <div class="cta-box">
+                <p><?php echo Language::_('SensfrxPlugin.general.heading17', true); ?></p>
+                <a href="https://client.sensfrx.ai" target="_blank" class="cta-link"><?php echo Language::_('SensfrxPlugin.general.heading16', true); ?></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#date_dashboard').on('change', function() {
+            var selectedValue = $(this).val();
+            $.ajax({
+                url: '',
+                type: 'POST',
+                data: {
+                    'AjaxCheck': 'displayDashboad',
+                    'date-dropdown': selectedValue
+                },
+                dataType: "json",
+                beforeSend: function() {
+                    $('#dashboardLoader').show();
+                },
+                success: function(response) {
+                    if (response["status"] == "success") {
+                        function formatValue(value) {
+                            return isNaN(value) || value === null || value === undefined ? "No Data Available Yet" : value;
+                        }
+
+                        // function updateStat(selector, value) {
+                        //     $(selector).text(formatValue(value));
+                        // }
+
+                        // const sections = ['ATO', 'trans', 'reg'];
+                        // sections.forEach(section => {
+                        //     const data = response[section] || {};
+                        //     updateStat(`#Total_${section}_c .stat-value`, data.t_count);
+                        //     updateStat(`#Total_${section}_a .stat-value`, data.a_count);
+                        //     updateStat(`#Total_${section}_chall .stat-value`, data.c_count);
+                        //     updateStat(`#Total_${section}_d .stat-value`, data.d_count);
+
+                        //     formatMinusValue(data.t_change, `#${section}_Total_c_change`);
+                        //     formatMinusValue(data.t_change, `#${section}_Total_c_change`);
+                        //     formatMinusValue(data.t_change, `#${section}_Total_c_change`);
+                        //     formatMinusValue(data.t_change, `#${section}_Total_c_change`);
+                        // });
+
+
+
+                        $("#Total_ATO_c .stat-value").text(formatValue(response["ato"]["t_count"]));
+                        $("#Total_ATO_a .stat-value").text(formatValue(response["ato"]["a_count"]));
+                        $("#Total_ATO_chall .stat-value").text(formatValue(response["ato"]["c_count"]));
+                        $("#Total_ATO_d .stat-value").text(formatValue(response["ato"]["d_count"]));
+                        $("#ATO_total_change").text(formatMinusValue(response["ato"]["t_change"], "#ATO_total_change"));
+                        $("#ATO_total_d_change").text(formatMinusValue(response["ato"]["d_change"], "#ATO_total_d_change"));
+                        $("#Total_ATO_chall_change").text(formatMinusValue(response["ato"]["c_change"], "#Total_ATO_chall_change"));
+                        $("#Total_ATO_a_change").text(formatMinusValue(response["ato"]["a_change"], "#Total_ATO_a_change"));
+
+                        /* Transection */
+                        $("#Total_c .stat-value").text(formatValue(response["trans"]["t_count"]));
+                        $("#Total_a .stat-value").text(formatValue(response["trans"]["a_count"]));
+                        $("#Total_chall .stat-value").text(formatValue(response["trans"]["c_count"]));
+                        $("#Total_d .stat-value").text(formatValue(response["trans"]["d_count"]));
+                        $("#Total_c_change").text(formatMinusValue(response["trans"]["t_change"], "#Total_c_change"));
+                        $("#Total_d_change").text(formatMinusValue(response["trans"]["d_change"], "#Total_d_change"));
+                        $("#Total_chall_change").text(formatMinusValue(response["trans"]["c_change"], "#Total_chall_change"));
+                        $("#Total_a_change").text(formatMinusValue(response["trans"]["a_change"], "#Total_a_change"));
+
+                        /* New Account Analytics */
+                        $("#reg_Total_c .stat-value").text(formatValue(response["reg"]["t_count"]));
+                        $("#reg_Total_a .stat-value").text(formatValue(response["reg"]["a_count"]));
+                        $("#reg_Total_chall .stat-value").text(formatValue(response["reg"]["c_count"]));
+                        $("#reg_Total_d .stat-value").text(formatValue(response["reg"]["d_count"]));
+                        $("#reg_Total_c_change").text(formatMinusValue(response["reg"]["t_change"], "#reg_Total_c_change"));
+                        $("#reg_Total_d_change").text(formatMinusValue(response["reg"]["d_change"], "#reg_Total_d_change"));
+                        $("#reg_Total_chall_change").text(formatMinusValue(response["reg"]["c_change"], "#reg_Total_chall_change"));
+                        $("#reg_Total_a_change").text(formatMinusValue(response["reg"]["a_change"], "#reg_Total_a_change"));
+                    } else {
+                        alert('error in API Connection');
+                    }
+                },
+                complete: function() {
+                    $('#dashboardLoader').hide();
+                },
+                error: function(xhr, status, error) {
+                    console.log('AJAX Error: ' + error);
+                }
+            });
+        });
+    });
+
+
+    function formatMinusValue(value, selector) {
+        const element = document.querySelector(selector);
+        if (isNaN(value) || value === null || value === undefined) {
+            updateElementClass(element, "decline", false);
+            return "00.00%";
+        }
+        const numericValue = parseFloat(value);
+        const isNegative = numericValue < 0;
+        updateElementClass(element, "decline", isNegative);
+        const formattedValue = `${isNegative ? "-" : "+"}${Math.abs(numericValue).toFixed(2)}%`;
+        return formattedValue;
+    }
+
+    function updateElementClass(element, className, shouldAdd) {
+        if (!element) return;
+        if (shouldAdd) {
+            element.classList.add(className);
+        } else {
+            element.classList.remove(className);
+        }
+    }
+</script>

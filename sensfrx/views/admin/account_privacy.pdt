@@ -1,0 +1,225 @@
+<?php
+// if (isset($_POST["privacyUpdate"]) > 0) :
+//    echo "<pre>";
+//    print_r($resultPrivacyUpdate);
+//    die;
+// endif;
+if (count($assets["stylesheet"]) > 0) :
+    foreach ($assets["stylesheet"] as $key => $css) :
+        echo "<link rel='stylesheet' href='$css'>";
+    endforeach;
+endif;
+
+require __DIR__ . "/default/navbar.pdt";
+?>
+
+<style>
+/* General Layout */
+/* .account-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.section-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.info-text {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.input-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.checkbox-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-label {
+    font-size: 14px;
+    color: #555;
+    margin-left: 10px;
+}
+
+.error-message {
+    font-size: 14px;
+    color: red;
+    margin-top: 5px;
+}
+
+.instruction {
+    font-size: 14px;
+    color: #777;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+    background-color: #0056b3;
+}
+
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+.alert {
+    position: relative;
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+}
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+} */
+</style>
+
+<div class="account-container">
+<?php
+    if (isset($resultPrivacyUpdate["result"]) && !empty($resultPrivacyUpdate["result"])) :
+        // echo "<pre>";
+        if ($resultPrivacyUpdate["result"]["status"] == "success") :
+            ?>
+            <div class="alert alert-success" role="alert">
+                <?php echo htmlspecialchars($resultPrivacyUpdate["result"]["message"]); ?>
+            </div>
+            <?php
+        else :
+            ?>
+            <div class="alert alert-danger" role="alert">
+                <?php echo htmlspecialchars($resultPrivacyUpdate["result"]["message"]); ?>
+            </div>
+            <?php
+            return 0;
+        endif;
+    endif;
+    ?>
+    <h3 class="section-title"><?php echo Language::_('SensfrxPlugin.account.heading', true); ?></h3>
+    <form class="privacy-form" action="" method="post">
+        <!-- Email Field -->
+        <div class="form-group">
+            <label for="email" class="form-label"><?php echo Language::_('SensfrxPlugin.account.heading1', true); ?></label>
+            <div class="input-wrapper">
+                <input type="email" id="privacy_email" name="email" placeholder="Enter your email" class="form-input" value="<?php echo $result_Privacy['result']['data']['privacy_email']; ?>" required>
+            </div>
+        </div>
+
+        <!-- Data Protection and Sharing Section -->
+        <section class="info-section">
+            <h3 class="section-title"><?php echo Language::_('SensfrxPlugin.account.heading2', true); ?></h3>
+            <p class="info-text"><?php echo Language::_('SensfrxPlugin.account.heading3', true); ?></p>
+        </section>
+
+        <!-- Compliance Section -->
+        <section class="info-section">
+            <h3 class="section-title"><?php echo Language::_('SensfrxPlugin.account.heading4', true); ?></h3>
+            <p class="info-text"><?php echo Language::_('SensfrxPlugin.account.heading5', true); ?></p>
+        </section>
+
+        <!-- User Consent Section -->
+        <section class="info-section">
+            <h3 class="section-title"><?php echo Language::_('SensfrxPlugin.account.heading6', true); ?></h3>
+            <p class="info-text"><?php echo Language::_('SensfrxPlugin.account.heading7', true); ?></p>
+        </section>
+
+        <!-- Terms and Conditions -->
+        <div class="form-group">
+            <div class="checkbox-wrapper">
+                <input type="checkbox" id="declaration" name="declaration" <?php if ($result_Privacy['result']['data']['privacy_consent'] == 'on') { echo 'checked'; } ?> required>
+                <label for="declaration" class="checkbox-label"><?php echo Language::_('SensfrxPlugin.account.heading8', true); ?></label>
+            </div>
+            <p class="error-message"><?php echo Language::_('SensfrxPlugin.account.heading9', true); ?></p>
+        </div>
+
+        <!-- Instructional Text -->
+        <div class="instruction">
+            <p><?php echo Language::_('SensfrxPlugin.account.heading10', true); ?></p>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" onclick="getClickedValuePrivacy(this)" name="privacyUpdate" class="submit-btn"><?php echo Language::_('SensfrxPlugin.account.heading11', true); ?></button>
+    </form>
+</div>
+
+
+
+<script>
+
+
+function getClickedValuePrivacy(submitButton) {
+    // Get the email value and checkbox state
+    const privacy_email = $('#privacy_email').val();
+    const privacy_checkbox = $('#declaration');
+    const errorMessage = $('.error-message');
+
+    // Check the checkbox value
+    var checkboxValue1 = privacy_checkbox.prop('checked') ? '1' : '0';
+
+    // Validate the email
+    if (privacy_email === "") {
+        alert("Please fill the Email.");
+        return false; // Prevent form submission
+    } else if (!privacy_checkbox.prop('checked')) {
+        errorMessage.show(); // Show error message if checkbox isn't checked
+        return false; // Prevent form submission
+    } else {
+        // Set hidden fields' values for email and checkbox state
+        $('#emailprivacy').val(privacy_email);
+        $('#checkboxprivacy').val(checkboxValue1);
+
+        // Trigger the form submission with a slight delay (100ms)
+        setTimeout(function() {
+            $('#Privacy').click(); // Simulate the click on the submit button
+        }, 100);
+    }
+}
+
+</script>

@@ -1,0 +1,146 @@
+<?php
+// echo "<pre>";
+// print_r($policies);
+// die;
+if (count($assets["stylesheet"]) > 0) :
+    foreach ($assets["stylesheet"] as $key => $css) :
+        echo "<link rel='stylesheet' href='$css'>";
+    endforeach;
+endif;
+
+require __DIR__ . "/default/navbar.pdt";
+?>
+<style>
+    .table tr:hover {
+        background-color: #ecf7ff;
+    }
+
+    .table tbody tr {
+        border-bottom: 1px solid #e1e1e1;
+    }
+
+    .table tbody td {
+        text-align: center;
+    }
+    .form-control {
+            display: block;
+            width: 50% !important;
+            padding: .375rem .75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #495057;
+            background-color: #ffffff !important;
+            background-clip: padding-box;
+            border: 1px solid #ced4da;
+            border-radius: .25rem;
+            transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+        }
+
+        .form-control:focus {
+            color: #495057;
+            background-color: #fff;
+            border-color: #80bdff;
+            outline: 0;
+            box-shadow: 0 0 0 .2rem rgba(0, 123, 255, .25);
+        }
+
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+
+        .alert {
+            position: relative;
+            padding: .75rem 1.25rem;
+            margin-bottom: 1rem;
+            border: 1px solid transparent;
+            border-radius: .25rem;
+        }
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+</style>
+
+
+<?php
+if (!empty($errorMessage)) {
+?>
+    <div class="alert alert-danger" role="alert">
+        <?php echo $errorMessage; ?>
+    </div>
+<?php
+} else {
+
+    if(!empty($successMessage)){
+        ?>
+        <div class="alert alert-success" role="alert"> <?php echo $successMessage; ?></div>
+<?php
+    }
+?>
+
+    <div class="common_box_content">
+        <form method="post" action="">
+            <table class="table" id="packages">
+                <thead>
+                    <tr class="heading_row">
+                        <th>Count</th>
+                        <th>Detector</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Score Value</th>
+                        <th>Active</th>
+                        <th>Modules</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    foreach ($rules["data"] as $key => $rule) {
+                    ?>
+                        <tr class="">
+                            <td> <?php echo $key + 1 ?> </td>
+                            <td><?php echo $rule["code"] ?></td>
+                            <td><?php echo $rule["title"] ?></td>
+                            <td><?php echo $rule["desc"] ?></td>
+                            <td><input type="number" name="score[]" value="<?php echo $rule["score_value"] ?>" class="" min="1" max="100"></td>
+                            <td>
+                                <input type="hidden" name="active[<?php echo $key ?>]" value="0">
+                                <input type="checkbox" name="active[<?php echo $key ?>]" <?php echo ($rule["active"] == "1" ? "checked" : '') ?>>
+                            </td>
+                            <td><?php echo  implode(", ", $rule["tag"]) ?></td>
+                        </tr>
+
+                    <?php
+
+                    }
+                    ?>
+                </tbody>
+            </table>
+
+
+            <div class="mt-4 float-right">
+                <input type="submit" name="update" value="Update Validation Rules" class="btn btn-primary">
+            </div>
+
+        </form>
+
+    </div>
+
+<?php
+}
+?>
+
+<script>
+    document.querySelector("form").addEventListener("submit", function (event) {
+        const scores = document.querySelectorAll('input[name="score[]"]');
+        for (const score of scores) {
+            if (score.value < 1 || score.value > 100) {
+                alert("Score value must be between 1 and 100.");
+                event.preventDefault(); // prevent form submission
+                return;
+            }
+        }
+    });
+</script>
