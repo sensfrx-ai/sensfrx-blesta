@@ -79,6 +79,113 @@ require __DIR__ . "/default/navbar.pdt";
     #content {
         display: none;
     }
+
+    .nave-top-sensfrx a.btn.active,
+    .nave-top-sensfrx a.btn.active:hover {
+        background-color: #0254ff !important;
+        color: #fff !important;
+    }
+
+    .nave-top-sensfrx .navbar-inverse {
+        background-color: #f5f8fd;
+        border-color: #f5f8fd;
+    }
+
+    .section-title {
+        font-size: 30px;
+        font-weight: 600;
+        line-height: 36px;
+        text-align: left;
+        color: #03060B;
+        text-transform: capitalize;
+        background-color: #fff;
+        border: 1px solid #fff;
+        margin: 12px 0 30px 0;
+        padding: 0;
+    }
+
+    .alert {
+        padding: 0;
+        margin: 0;
+    }
+
+    .card {
+        border: none;
+    }
+.card-body, .panel .panel-body {
+   
+    padding:0 1.25rem 1.25rem;
+}
+    .table-as1 {
+        border: 1px solid #E5E5E5;
+        border-radius: 6px;
+    }
+
+    .table-as1 thead {
+        background-color: #1D2327;
+    }
+
+    .table-as1 thead tr {
+        color: #fff;
+    }
+ #textC{
+        text-align: center !important;
+    }
+     #textC1{
+        text-align: center !important;
+    }
+    .table-as1 thead tr th {
+        padding: 15px 0 15px 15px !important;
+        text-align: left !important;
+        font-size: 16px;
+        font-weight: 900;
+        line-height: 19.2px;
+    }
+
+    .table-as1 tbody tr td {
+        padding: 12px 0 12px 15px !important;
+        text-align: left !important;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 19.2px;
+    }
+
+    div.dt-container.dt-empty-footer tbody>tr:last-child>* {
+        border-bottom: 0px !important;
+    }
+
+    .btn-success {
+        background-color: #30B34E;
+        border-radius: 6px;
+        padding: 10px;
+        width: 75px;
+        height: 36px;
+        margin-right: 5px;
+    }
+
+    .btn-danger {
+        background-color: #E02200;
+        border-radius: 6px;
+        padding: 10px;
+        width: 75px;
+        height: 36px;
+
+    }
+
+    input[type=checkbox] {
+        border: 1.5px solid #EBEBEB;
+        width: 18px;
+        height: 18px;
+    }
+    .link-text{
+        color: #0254FF;
+text-decoration: underline;
+    }
+  table.dataTable thead > tr > th.dt-orderable-asc span.dt-column-order:before, table.dataTable thead > tr > th.dt-orderable-asc span.dt-column-order:after, table.dataTable thead > tr > th.dt-orderable-desc span.dt-column-order:before, table.dataTable thead > tr > th.dt-orderable-desc span.dt-column-order:after{
+        font-size: 0.6em !important;
+    opacity: 60% !important;
+    margin-top: 2px;
+   }
 </style>
 
 <?php
@@ -86,16 +193,16 @@ require __DIR__ . "/default/navbar.pdt";
 if (isset($resultPrivacyUpdate["result"]) && !empty($resultPrivacyUpdate["result"])) :
     if ($resultPrivacyUpdate["result"]["status"] == "success") :
 ?>
-        <div class="alert alert-success" role="alert">
-            <?php echo htmlspecialchars($resultPrivacyUpdate["result"]["message"]); ?>
-        </div>
-    <?php
+<div class="alert alert-success" role="alert">
+    <?php echo htmlspecialchars($resultPrivacyUpdate["result"]["message"]); ?>
+</div>
+<?php
 
     else :
     ?>
-        <div class="alert alert-danger" role="alert">
-            <?php echo htmlspecialchars($resultPrivacyUpdate["result"]["message"]); ?>
-        </div>
+<div class="alert alert-danger" role="alert">
+    <?php echo htmlspecialchars($resultPrivacyUpdate["result"]["message"]); ?>
+</div>
 <?php
         return 0;
     endif;
@@ -113,10 +220,10 @@ endif;
         echo "";
     }
 ?>" role="alert"
-<?php if (($orderResponse["result"]["status"] != "fail" || $orderResponse["result"]["status"] != "success") && !isset($orderResponse["result"])): ?> style="display: none;" <?php endif; ?>>
-<?php echo htmlspecialchars($orderResponse["result"]["message"]); ?>
+    <?php if (($orderResponse["result"]["status"] != "fail" || $orderResponse["result"]["status"] != "success") && !isset($orderResponse["result"])): ?>
+    style="display: none;" <?php endif; ?>>
+    <?php echo htmlspecialchars($orderResponse["result"]["message"]); ?>
 </div>
-
 
 <div id="orderReviewLoader" class="loader-overlay" style="display: none;">
     <div class="spinner"></div>
@@ -125,27 +232,26 @@ endif;
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
 
-
 <div class="card">
-    <div class="card-header">
-        <h2><span><?php echo Language::_('SensfrxPlugin.order.heading', true); ?></span></h2>
-    </div>
     <div class="card-body">
         <form action="" method="post" id="orderRequestForm">
-            <div class="action-btns">
-                <input type="hidden" name="submitOrderReviewAll" id="submitOrderReviewAll" value="">
-                <button class="btn btn-success" id="approveOrderBtn" value="approveAll">Approve</button>
-                <button class="btn btn-danger" id="rejectOrderBtn" value="rejectAll">Reject</button>           
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="section-title"><?php echo Language::_('SensfrxPlugin.order.heading', true); ?></h2>
+                <div class="action-btns">
+                    <input type="hidden" name="submitOrderReviewAll" id="submitOrderReviewAll" value="">
+                    <button class="btn btn-success" id="approveOrderBtn" value="approveAll">Approve</button>
+                    <button class="btn btn-danger" id="rejectOrderBtn" value="rejectAll">Reject</button>
+                </div>
             </div>
 
-            <table id="orderOverview" class="display" style="width:100%">
+            <table id="orderOverview" class="display table-as1" style="width:100%">
                 <thead>
                     <tr>
-                        <th><input type="checkbox" id="SelectAll" name="SelectAll" value="SelectAll"></th>
-                        <th><?php echo Language::_('SensfrxPlugin.order.table.heading1', true); ?></th>
-                        <th><?php echo Language::_('SensfrxPlugin.order.table.heading2', true); ?></th>
+                        <th width="5%"><input type="checkbox" id="SelectAll" name="SelectAll" value="SelectAll"></th>
+                        <th width="7%"><?php echo Language::_('SensfrxPlugin.order.table.heading1', true); ?></th>
+                        <th width="10%"><?php echo Language::_('SensfrxPlugin.order.table.heading2', true); ?></th>
                         <th><?php echo Language::_('SensfrxPlugin.order.table.heading3', true); ?></th>
-                        <th><?php echo Language::_('SensfrxPlugin.order.table.heading4', true); ?></th>
+                        <th id="textC"><?php echo Language::_('SensfrxPlugin.order.table.heading4', true); ?></th>
                         <th><?php echo Language::_('SensfrxPlugin.order.table.heading5', true); ?></th>
                         <th><?php echo Language::_('SensfrxPlugin.order.table.heading6', true); ?></th>
                         <th><?php echo Language::_('SensfrxPlugin.order.table.heading7', true); ?></th>
@@ -157,19 +263,25 @@ endif;
                         foreach ($transactionDetails["data"] as $key => $item) : 
                         $sr_no++;
                     ?>
-                        <tr>
-                            <td><input type="checkbox" class="Select" name="Select_transId@@<?php echo $item['transaction_id']; ?>" value="<?php echo $item['transaction_id']; ?>"></td>
-                            <td><?php echo $sr_no; ?></td>
-                            <td><?php echo $item["order_id"]; ?></td>
-                            <td><?php echo $item["email"]; ?></td>
-                            <td><?php echo $item["transaction_score"]; ?></td>
-                            <td><?php echo date('d-M-Y h:i A', strtotime($item['event_time'])); ?></td>
-                            <td><a href="<?php echo $item['link']; ?>" target="_blank">View Detail</a></td>
-                            <td>
-                                <button class="btn btn-success accept-reject-order" data-trans_id="<?php echo $item['transaction_id']; ?>" data-action="approve">Approve</button>
-                                <button class="btn btn-danger accept-reject-order" data-trans_id="<?php echo $item['transaction_id']; ?>" data-action="reject">Reject</button>
-                            </td>
-                        </tr>
+                    <tr>
+                        <td><input type="checkbox" class="Select"
+                                name="Select_transId@@<?php echo $item['transaction_id']; ?>"
+                                value="<?php echo $item['transaction_id']; ?>"></td>
+                        <td><?php echo $sr_no; ?></td>
+                        <td><?php echo $item["order_id"]; ?></td>
+                        <td><?php echo $item["email"]; ?></td>
+                        <td id="textC1"><?php echo $item["transaction_score"]; ?></td>
+                        <td><?php echo date('d-M-Y h:i A', strtotime($item['event_time'])); ?></td>
+                        <td><a class="link-text" href="<?php echo $item['link']; ?>" target="_blank">View Detail</a></td>
+                        <td>
+                            <button class="btn btn-success accept-reject-order"
+                                data-trans_id="<?php echo $item['transaction_id']; ?>"
+                                data-action="approve">Approve</button>
+                            <button class="btn btn-danger accept-reject-order"
+                                data-trans_id="<?php echo $item['transaction_id']; ?>"
+                                data-action="reject">Reject</button>
+                        </td>
+                    </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
@@ -183,11 +295,9 @@ endif;
             e.preventDefault();
             trans_id = $(this).data("trans_id");
             action = $(this).data("action");
-
             let swalTitle = '';
             let swalText = '';
             let swalIcon = '';
-
             if (action === 'approve') {
                 swalTitle = 'Are you sure?';
                 swalText = 'Once approved, the orders will be processed.';
@@ -197,7 +307,6 @@ endif;
                 swalText = 'Once rejected, the orders will be canceled.';
                 swalIcon = 'warning';
             }
-
             Swal.fire({
                 title: swalTitle,
                 text: swalText,
@@ -226,20 +335,25 @@ endif;
                         success: function(response) {
                             if (response.length !== 0) {
                                 if (response["result"]["status"] == "success") {
-                                    $("#orderUpdateStatus").removeClass("alert-danger")
-                                    $("#orderUpdateStatus").addClass("alert-success");
+                                    $("#orderUpdateStatus").removeClass(
+                                        "alert-danger")
+                                    $("#orderUpdateStatus").addClass(
+                                        "alert-success");
                                 } else if (response["result"]["status"] == "fail") {
                                     $("#orderUpdateStatus").addClass("alert-danger")
-                                    $("#orderUpdateStatus").removeClass("alert-success");
+                                    $("#orderUpdateStatus").removeClass(
+                                        "alert-success");
                                 } else {
-                                    $("#orderUpdateStatus").removeClass("alert-danger");
-                                    $("#orderUpdateStatus").removeClass("alert-success");
+                                    $("#orderUpdateStatus").removeClass(
+                                        "alert-danger");
+                                    $("#orderUpdateStatus").removeClass(
+                                        "alert-success");
                                     $("#orderUpdateStatus").hide();
                                 }
-
-                                $("#orderUpdateStatus").text(response["result"]["message"]);
+                                $("#orderUpdateStatus").text(response["result"][
+                                    "message"
+                                ]);
                                 $("#orderUpdateStatus").show();
-
                                 setTimeout(function() {
                                     location.reload();
                                 }, 3000);
@@ -253,11 +367,9 @@ endif;
                 }
             });
         });
-
         /* Approve button click event */
         $("#approveOrderBtn").click(function(e) {
             e.preventDefault();
-
             Swal.fire({
                 title: 'Are you sure?',
                 text: 'Once approved, the orders will be processed.',
@@ -273,11 +385,9 @@ endif;
                 }
             });
         });
-
         /* Reject button click event */
         $("#rejectOrderBtn").click(function(e) {
             e.preventDefault();
-
             Swal.fire({
                 title: 'Are you sure?',
                 text: 'Once rejected, the orders will be canceled.',
@@ -293,8 +403,6 @@ endif;
                 }
             });
         });
-
-
         $('#orderOverview').DataTable({
             columnDefs: [{
                 targets: 0,
@@ -308,7 +416,6 @@ endif;
                 $('.Select').prop('checked', false);
             }
         });
-
         $('.Select').click(function() {
             if ($('.Select:checked').length !== $('.Select').length) {
                 $('#SelectAll').prop('checked', false);
@@ -324,7 +431,6 @@ endif;
             });
             console.log(selectedValues);
         }
-
         $('#getSelectedBtn').click(function() {
             getSelectedValues();
         });

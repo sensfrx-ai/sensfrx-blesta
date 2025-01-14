@@ -11,7 +11,6 @@ endif;
 require __DIR__ . "/default/navbar.pdt";
 ?>
 
-
 <style>
     /* General container styling */
     body {
@@ -150,6 +149,68 @@ require __DIR__ . "/default/navbar.pdt";
             margin-bottom: 10px;
         }
     } */
+    .nave-top-sensfrx a.btn.active,
+    .nave-top-sensfrx a.btn.active:hover {
+        background-color: #0254ff !important;
+        color: #fff !important;
+    }
+
+    .nave-top-sensfrx .navbar-inverse {
+        background-color: #f5f8fd;
+        border-color: #f5f8fd;
+    }
+
+    .section-title-lic {
+        font-size: 30px;
+        font-weight: 600;
+        line-height: 36px;
+        text-align: left;
+        color: #03060B;
+        text-transform: capitalize;
+        background-color: #fff;
+        border: 1px solid #fff;
+        margin: 12px 0 30px 0;
+        padding: 0;
+    }
+
+    .info-table {
+        border: 1px solid #E5E5E5;
+        border-radius: 6px;
+    }
+
+    .info-table thead {
+        background-color: #1D2327;
+    }
+
+    .info-table thead tr {
+        color: #fff;
+    }
+
+    .info-table thead tr th {
+        padding: 15px 0 15px 15px !important;
+        text-align: left !important;
+        font-size: 16px;
+        font-weight: 900;
+        line-height: 19.2px;
+        background-color: #1D2327;
+    }
+
+    .info-table tbody tr td {
+        padding: 12px 0 12px 15px !important;
+        text-align: left !important;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 19.2px;
+    }
+
+    .license_information {
+        background-color: #fff;
+        border: 1px solid #CACBCF66;
+        margin-top: 40px;
+        padding: 20px 40px 45px;
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }
 </style>
 
 <?php
@@ -174,39 +235,43 @@ if (isset($resultPrivacyUpdate["result"]) && !empty($resultPrivacyUpdate["result
     endif;
 endif;
 ?>
-<div class="container license_information">
-    <h2><?php echo Language::_('SensfrxPlugin.license.heading', true); ?></h2>
+<div class="license_information">
+    <h2 class="section-title-lic"><?php echo Language::_('SensfrxPlugin.license.heading', true); ?></h2>
 
     <!-- Display the resultlicenceData data in a table -->
     <table class="info-table">
-        <tr>
-            <th><?php echo Language::_('SensfrxPlugin.license.heading1', true); ?></th>
-            <th><?php echo Language::_('SensfrxPlugin.license.heading2', true); ?></th>
-        </tr>
-        <tr>
-            <td><?php echo Language::_('SensfrxPlugin.license.heading4', true); ?></td>
-            <td>
-                <?php echo $resultlicenceData['result']['data']['plan']; ?>
-            </td>
-        </tr>
-        <tr>
-            <td><?php echo Language::_('SensfrxPlugin.license.heading5', true); ?></td>
-            <td>
-                <?php echo $resultlicenceData['result']['data']['available_credit']; ?>
-            </td>
-        </tr>
-        <tr>
-            <td><?php echo Language::_('SensfrxPlugin.license.heading6', true); ?></td>
-            <td>
-                <?php echo $resultlicenceData['result']['data']['start_date']; ?>
-            </td>
-        </tr>
-        <tr>
-            <td><?php echo Language::_('SensfrxPlugin.license.heading7', true); ?></td>
-            <td>
-                <?php echo $resultlicenceData['result']['data']['renewal']; ?>
-            </td>
-        </tr>
+        <thead>
+            <tr>
+                <th><?php echo Language::_('SensfrxPlugin.license.heading1', true); ?></th>
+                <th><?php echo Language::_('SensfrxPlugin.license.heading2', true); ?></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><?php echo Language::_('SensfrxPlugin.license.heading4', true); ?></td>
+                <td>
+                    <?php echo $resultlicenceData['result']['data']['plan']; ?>
+                </td>
+            </tr>
+            <tr>
+                <td><?php echo Language::_('SensfrxPlugin.license.heading5', true); ?></td>
+                <td>
+                    <?php echo $resultlicenceData['result']['data']['available_credit']; ?>
+                </td>
+            </tr>
+            <tr>
+                <td><?php echo Language::_('SensfrxPlugin.license.heading6', true); ?></td>
+                <td>
+                    <?php echo $resultlicenceData['result']['data']['start_date']; ?>
+                </td>
+            </tr>
+            <tr>
+                <td><?php echo Language::_('SensfrxPlugin.license.heading7', true); ?></td>
+                <td>
+                    <?php echo $resultlicenceData['result']['data']['renewal']; ?>
+                </td>
+            </tr>
+        </tbody>
     </table>
 </div>
 <div class="license-information-subscription">
@@ -216,8 +281,10 @@ endif;
                 <div class="sensfrx-custom-div"><?php echo Language::_('SensfrxPlugin.license.heading8', true); ?></div>
             </span>
             <span class="info-value">
-                <div class="sensfrx-custom-div"><?php echo Language::_('SensfrxPlugin.license.heading9', true); ?> <a href="mailto:info@sensfrx.ai"
-                        class="sensfrx-license-eamil-print"><?php echo Language::_('SensfrxPlugin.license.heading10', true); ?></a></div>
+                <div class="sensfrx-custom-div"><?php echo Language::_('SensfrxPlugin.license.heading9', true); ?> <a
+                        href="mailto:info@sensfrx.ai"
+                        class="sensfrx-license-eamil-print"><?php echo Language::_('SensfrxPlugin.license.heading10', true); ?></a>
+                </div>
             </span>
         </div>
 

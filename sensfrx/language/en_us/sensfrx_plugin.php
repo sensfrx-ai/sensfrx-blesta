@@ -18,6 +18,7 @@ $lang['SensfrxPlugin.redirect.message'] = 'Click <a href="{link}" style="color: 
 /* nav bar */
 $lang['SensfrxPlugin.nav.tab1'] = 'General';
 $lang['SensfrxPlugin.nav.tab2'] = 'Order Review';
+$lang['SensfrxPlugin.nav.tab10'] = 'Account Review';
 $lang['SensfrxPlugin.nav.tab3'] = 'Activity';
 $lang['SensfrxPlugin.nav.tab4'] = 'Validation Rules';
 $lang['SensfrxPlugin.nav.tab5'] = 'Policies Settings';
@@ -61,6 +62,16 @@ $lang['SensfrxPlugin.order.table.heading4'] = 'Risk Score';
 $lang['SensfrxPlugin.order.table.heading5'] = 'Date Created';
 $lang['SensfrxPlugin.order.table.heading6'] = 'Details';
 $lang['SensfrxPlugin.order.table.heading7'] = 'Action';
+
+/* account review tab */
+$lang['SensfrxPlugin.account.review.heading'] = 'Account Review ';
+$lang['SensfrxPlugin.account.review.table.heading1'] = '#ID';
+$lang['SensfrxPlugin.account.review.table.heading2'] = 'Name';
+$lang['SensfrxPlugin.account.review.table.heading3'] = 'Email';
+$lang['SensfrxPlugin.account.review.table.heading4'] = 'Risk Score';
+$lang['SensfrxPlugin.account.review.table.heading5'] = 'Date Created';
+$lang['SensfrxPlugin.account.review.table.heading6'] = 'Details';
+$lang['SensfrxPlugin.account.review.table.heading7'] = 'Action';
 
 /* Activity tab */
 $lang['SensfrxPlugin.activity.heading'] = 'Activity';

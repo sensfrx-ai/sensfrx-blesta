@@ -1,4 +1,9 @@
 <style>
+	.header_sensfrx .nave-top-sensfrx .navbar-inverse {
+		background-color: #f5f8fd;
+		border-color: #f5f8fd;
+	}
+
 	.navbar-cust {
 		display: inline-block;
 		cursor: pointer;
@@ -24,6 +29,10 @@
 
 	.change .bar3 {
 		transform: translate(0, -11px) rotate(45deg);
+	}
+
+	.logo-sensfrx {
+		margin-top: -10px;
 	}
 
 	@media (min-width: 768px) {
@@ -52,6 +61,9 @@
 		}
 	}
 </style>
+<div class="logo-sensfrx">
+	<img src="/blesta/plugins/sensfrx/assets/images/sensfrx-logo.png" width="160" alt="Sensfrx Logo" />
+</div>
 <div class="header_sensfrx">
 	<div class="nave-top-sensfrx">
 		<nav class="navbar navbar-inverse ">
@@ -67,31 +79,42 @@
 			<div id="navbarCollapse" class="collapse navbar-collapse">
 				<ul class="nav navbar-nav">
 					<li id="home" class="nav-item">
-						<a href="<?php echo $this->admin_uri . 'plugin/sensfrx/admin/dashboard'; ?>" class="btn <?php echo( $activePage == 'dashboard' ? 'active' : ''); ?>"><?php echo Language::_('SensfrxPlugin.nav.tab1', true); ?></a>
+						<a href="<?php echo $this->admin_uri . 'plugin/sensfrx/admin/dashboard'; ?>"
+							class="btn <?php echo( $activePage == 'dashboard' ? 'active' : ''); ?>"><?php echo Language::_('SensfrxPlugin.nav.tab1', true); ?></a>
 					</li>
 					<li id="home" class="nav-item">
-						<a href="<?php echo $this->admin_uri . 'plugin/sensfrx/admin/order_review'; ?>" class="btn <?php echo($activePage == 'order_review' ? 'active' : ''); ?>"><?php echo Language::_('SensfrxPlugin.nav.tab2', true); ?></a>
+						<a href="<?php echo $this->admin_uri . 'plugin/sensfrx/admin/order_review'; ?>"
+							class="btn <?php echo($activePage == 'order_review' ? 'active' : ''); ?>"><?php echo Language::_('SensfrxPlugin.nav.tab2', true); ?></a>
+					</li>
+					<li id="home" class="nav-item">
+						<a href="<?php echo $this->admin_uri . 'plugin/sensfrx/admin/account_review'; ?>" class="btn <?php echo($activePage == 'account_review' ? 'active' : ''); ?>"><?php echo Language::_('SensfrxPlugin.nav.tab10', true); ?></a>
 					</li>
 					<li id="home" class="nav-item">
 						<a href="<?php echo $this->admin_uri . 'plugin/sensfrx/admin/activity'; ?>" class="btn <?php echo($activePage == 'activity' ? 'active' : ''); ?>"><?php echo Language::_('SensfrxPlugin.nav.tab3', true); ?></a>
 					</li>
 					<li id="home" class="nav-item">
-						<a href="<?php echo$this->admin_uri.'plugin/sensfrx/admin/validation_rules';?>" class="btn <?php echo($activePage == 'validation_rules' ? 'active' : ''); ?>"><?php echo Language::_('SensfrxPlugin.nav.tab4', true); ?></a>
+						<a href="<?php echo$this->admin_uri.'plugin/sensfrx/admin/validation_rules';?>"
+							class="btn <?php echo($activePage == 'validation_rules' ? 'active' : ''); ?>"><?php echo Language::_('SensfrxPlugin.nav.tab4', true); ?></a>
 					</li>
 					<li id="home" class="nav-item">
-						<a href="<?php echo $this->admin_uri . 'plugin/sensfrx/admin/policies_settings'; ?>" class="btn <?php echo($activePage == 'policies_settings' ? 'active' : '') ;?>"><?php echo Language::_('SensfrxPlugin.nav.tab5', true); ?></a>
+						<a href="<?php echo $this->admin_uri . 'plugin/sensfrx/admin/policies_settings'; ?>"
+							class="btn <?php echo($activePage == 'policies_settings' ? 'active' : '') ;?>"><?php echo Language::_('SensfrxPlugin.nav.tab5', true); ?></a>
 					</li>
 					<li id="home" class="nav-item">
-						<a href="<?php echo $this->admin_uri . 'plugin/sensfrx/admin/notifications_alerts'; ?>" class="btn <?php echo($activePage == 'notifications_alerts' ? 'active' : ''); ?>"><?php echo Language::_('SensfrxPlugin.nav.tab6', true); ?></a>
+						<a href="<?php echo $this->admin_uri . 'plugin/sensfrx/admin/notifications_alerts'; ?>"
+							class="btn <?php echo($activePage == 'notifications_alerts' ? 'active' : ''); ?>"><?php echo Language::_('SensfrxPlugin.nav.tab6', true); ?></a>
 					</li>
 					<li id="home" class="nav-item">
-						<a href="<?php echo $this->admin_uri . 'plugin/sensfrx/admin/license_information'; ?>" class="btn <?php echo($activePage == 'license_information' ? 'active' : ''); ?>"><?php echo Language::_('SensfrxPlugin.nav.tab7', true); ?></a>
+						<a href="<?php echo $this->admin_uri . 'plugin/sensfrx/admin/license_information'; ?>"
+							class="btn <?php echo($activePage == 'license_information' ? 'active' : ''); ?>"><?php echo Language::_('SensfrxPlugin.nav.tab7', true); ?></a>
 					</li>
 					<li id="home" class="nav-item">
-						<a href="<?php echo $this->admin_uri . 'plugin/sensfrx/admin/account_privacy'; ?>" class="btn <?php echo($activePage == 'account_privacy' ? 'active' : ''); ?>"><?php echo Language::_('SensfrxPlugin.nav.tab8', true); ?></a>
+						<a href="<?php echo $this->admin_uri . 'plugin/sensfrx/admin/account_privacy'; ?>"
+							class="btn <?php echo($activePage == 'account_privacy' ? 'active' : ''); ?>"><?php echo Language::_('SensfrxPlugin.nav.tab8', true); ?></a>
 					</li>
 					<li id="home" class="nav-item">
-						<a href="<?php echo $this->admin_uri . 'plugin/sensfrx/admin/profile_info'; ?>" class="btn <?php echo($activePage == 'profile_info' ? 'active' : ''); ?>"><?php echo Language::_('SensfrxPlugin.nav.tab9', true); ?></a>
+						<a href="<?php echo $this->admin_uri . 'plugin/sensfrx/admin/profile_info'; ?>"
+							class="btn <?php echo($activePage == 'profile_info' ? 'active' : ''); ?>"><?php echo Language::_('SensfrxPlugin.nav.tab9', true); ?></a>
 					</li>
 					<!-- <li id="webhook-update" class="nav-item">
 						<a href="<?php echo $this->admin_uri . 'plugin/sensfrx/admin/webhook_update'; ?>" class="webhook-update">
@@ -105,15 +128,14 @@
 	</div>
 </div>
 
-
 <script>
-function myFunctionAnmol(x) {
-  x.classList.toggle("change");
-}
-$(document).ready(function(){
-	$(".navbar-cust").click(function(){
-		console.log("hhh");
-		$("body").toggleClass("cust-navbar-d");
+	function myFunctionAnmol(x) {
+		x.classList.toggle("change");
+	}
+	$(document).ready(function() {
+		$(".navbar-cust").click(function() {
+			console.log("hhh");
+			$("body").toggleClass("cust-navbar-d");
+		})
 	})
-})
 </script>

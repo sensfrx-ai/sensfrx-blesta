@@ -86,6 +86,14 @@ class SensfrxPlugin extends Plugin
                 ->setKey(array("id"), "primary")
                 ->create("sensfrx_notification_activity");
         }
+        if (!$this->tableExist("sensfrx_fraud_registration")) {
+            $this->Record
+                ->setField("id", array('type' => "int", 'size' => 11, 'unsigned' => true, 'auto_increment' => true))
+                ->setField("email", array('type' => "varchar", 'size' => 255))
+                ->setKey(array("id"), "primary")
+                ->setKey(array("email"), "unique")
+                ->create("sensfrx_fraud_registration");
+        }
     }
 
     public function uninstall($plugin_id, $last_instance)
@@ -106,6 +114,7 @@ class SensfrxPlugin extends Plugin
         $this->Record->drop("sensfrx_policies_setting");
         $this->Record->drop("sensfrx_webhook");
         $this->Record->drop("sensfrx_notification_activity");
+        $this->Record->drop("sensfrx_fraud_registration");
 
         if (isset($sensfrxConfigData->domain) && $sensfrxConfigData->domain != "" && isset($sensfrxConfigData->property_id) && $sensfrxConfigData->property_id && $sensfrxConfigData->property_secret) {
             $api_response = $this->SaveManageOptions->sensfrx_CurlRequest($sensfrxConfigData->domain, $sensfrxConfigData->property_id, $sensfrxConfigData->property_secret, 'deactivate');
@@ -329,18 +338,13 @@ class SensfrxPlugin extends Plugin
             ];
             $postData = json_encode($mainarray);
             $url = "https://a.sensfrx.ai/v1/transaction";
-            /* https://sensfrxblesta.shinedezign.pro/order/cart/index/sensfrx */
-            $result = $this->SensfrxHelper->__post($url, $postData);
-            // echo '<pre>';
-            // print_r($result);
+            $result = $this->SensfrxHelper->__post($url, $postData);            
 
             if ($result['code'] == 200) {
 
                 $resultArray = $result['result'];
                 $status = $resultArray["status"];
-                $severity = $resultArray["severity"]; 
-                // $status = 'deny';
-                // $severity = 'critical';           
+                $severity = $resultArray["severity"];                           
                 $deviceId = isset($resultArray['device']['device_id']) ? $resultArray['device']['device_id'] : '';
                 $deviceName = isset($resultArray['device']['name']) ? $resultArray['device']['name'] : '';
                 $deviceIp = isset($resultArray['device']['ip']) ? $resultArray['device']['ip'] : '';
@@ -611,9 +615,7 @@ class SensfrxPlugin extends Plugin
                 $denyurl = $CurPageURL . '/blesta/client/login?deny=true&deviceId=' . $deviceID . '&verify=' . $encryptredUserid;
                 $resultArray = $result['result'];
                 $status = $resultArray["status"];
-                $severity = $resultArray["severity"];
-                // $status = 'deny';
-                // $severity = 'critical';
+                $severity = $resultArray["severity"];                
                 $deviceId = isset($resultArray['device']['device_id']) ? $resultArray['device']['device_id'] : '';
                 $deviceName = isset($resultArray['device']['name']) ? $resultArray['device']['name'] : '';
                 $deviceIp = isset($resultArray['device']['ip']) ? $resultArray['device']['ip'] : '';
@@ -788,8 +790,8 @@ class SensfrxPlugin extends Plugin
             if ($resultData['code'] == 200) {
                 $status = $resultData['result']['status'];
                 $severity = $resultData['result']['severity'];
-                // $status = 'allow';
-                // $severity = 'medium';
+                // $status = 'deny';
+                // $severity = 'critical';
                 $deviceId = isset($resultData['result']['device']['device_id']) ? $resultData['result']['device']['device_id'] : '';
                 $deviceName = isset($resultData['result']['device']['name']) ? $resultData['result']['device']['name'] : '';
                 $deviceIp = isset($resultData['result']['device']['ip']) ? $resultData['result']['device']['ip'] : '';
@@ -1190,10 +1192,7 @@ class SensfrxPlugin extends Plugin
         if ($result['code'] == 200) {
             $resultArray = $result['result'];
             $status = $resultArray["status"];
-            $severity = $resultArray["severity"];
-            // $status = 'deny';
-            // $severity = 'critical';
-
+            $severity = $resultArray["severity"];        
             $deviceId = $resultArray["device"]["device_id"];
             $deviceName = $resultArray["device"]["name"];
             $deviceIp = $resultArray["device"]["ip"];
@@ -1375,7 +1374,6 @@ class SensfrxPlugin extends Plugin
         }
 
         if (isset($params["portal"]) && $params["portal"] == "client") {            
-            // die('test');
             $deviceId = isset($_GET['deviceId']) ? $_GET['deviceId'] : '';
             $allow = isset($_GET['allow']) ? $_GET['allow'] : '';
             $deny = isset($_GET['deny']) ? $_GET['deny'] : '';
@@ -1389,7 +1387,7 @@ class SensfrxPlugin extends Plugin
                 $url = "https://a.sensfrx.ai/v1/devices/" . urlencode($deviceId) . "/deny";                
                 $postData = [];
                 $result = $this->SensfrxHelper->__post($url, $postData);
-            }   
+            }               
             
             //Bot API implementation
             if (isset($_COOKIE['sens_di_1'])) {
@@ -1448,9 +1446,7 @@ class SensfrxPlugin extends Plugin
             $resultData = $this->SensfrxHelper->__post($url, $postData);
             if ($resultData['code'] == 200) {
                 $status = $resultData['result']['status'];
-                $severity = $resultData['result']['severity'];
-                // $status = 'deny';
-                // $severity = 'critical';
+                $severity = $resultData['result']['severity'];                
                 $deviceId = isset($resultData['result']['device']['device_id']) ? $resultData['result']['device']['device_id'] : '';
                 $deviceName = isset($resultData['result']['device']['name']) ? $resultData['result']['device']['name'] : '';
                 $deviceIp = isset($resultData['result']['device']['ip']) ? $resultData['result']['device']['ip'] : '';
@@ -1497,12 +1493,7 @@ class SensfrxPlugin extends Plugin
                         'date' => date('Y-m-d'),
                         'reset_password_url' => $reset_password_url
                     ]
-                ];
-
-                // echo '<pre></pre>';
-                // print_r($emailBodyLoginArray);
-                // print_r($emailBodyRestArray);               
-                // die();
+                ];                
 
                 $policySettings = $this->SensfrxHelper->getData("sensfrx_policies_setting", ["key" => "policies_settings"]);
                 $policySettings = isset($policySettings->value) ? json_decode($policySettings->value, true) : '';
@@ -1615,7 +1606,60 @@ class SensfrxPlugin extends Plugin
                     header("Location: " . $reset_password_url);
                     exit;
                 }
-            } 
+            }
+
+            //new account manual review feature - updating status of account  
+            $client_id = $this->Session->read('blesta_client_id');
+            if ($client_id) {
+                $client = $this->Record->select()
+                    ->from("clients")
+                    ->where("id", "=", $client_id)
+                    ->fetch();
+                if ($client) {
+                    $id_value = $client->user_id;
+                    $user = $this->Record->select()
+                        ->from("users")
+                        ->where("id", "=", $id_value)
+                        ->fetch();
+                    $userEmail = $user->username;
+                }
+            }            
+            //echo 'email-' . $userEmail;                 
+            $rows = $this->Record->select()
+                ->from("sensfrx_fraud_registration")
+                ->where("email", "=", $userEmail)
+                ->fetchAll();            
+            //print_r($rows);                        
+            $found_match = false;
+            foreach ($rows as $row) {
+                if ($row->email == $userEmail) {
+                    $found_match = true;
+                    break;
+                }
+            }
+            if ($found_match) {
+                //echo 'match found';                
+                $this->Record->where("id", "=", $client_id)->update("clients", ["status" => "fraud"]);                
+                if (
+                    (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
+                    $_SERVER['SERVER_PORT'] == 443 ||
+                    (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')
+                ) {
+                    $protocol = "https://";
+                } else {
+                    $protocol = "http://";
+                }
+                $domain = $_SERVER['HTTP_HOST'];
+                $base_url = $protocol . $domain . "/";
+                $reset_password_url = $base_url . "blesta/client/login";
+                if (!session_id()) {
+                    session_start();
+                }
+                $this->Session->clear(); // Clear Blesta session data                
+                $this->Session->write('error_message', 'Sensfrx - Unusual activity has been detected with your recent registration. As a precaution, your registration has been placed on hold and cannot be processed at this time.');
+                header("Location: " . $reset_password_url);
+                exit;
+            }                          
 
             if (!session_id()) {
                 session_start();
@@ -1840,15 +1884,15 @@ class SensfrxPlugin extends Plugin
     {
         $params = $event->getParams();
         $errors = [];
-        $deviceID = $this->getDeviceId();
-
+        $deviceID = $this->getDeviceId();        
+        
         $phoneNumber = isset($params["vars"]["numbers"]["0"]["number"]) ? $params["vars"]["numbers"]["0"]["number"] : '';
         $postDataArray = [
             "ev" => "register_succeeded",
             "dID" => $deviceID,
             "h"  => $this->SensfrxHelper->createHArray(),
             "rfs" => array('email' => $params["vars"]["email"], 'name' => $params["vars"]["first_name"] . ' ' . $params["vars"]["last_name"], 'phone' => $phoneNumber, 'password' => ''),
-        ];
+        ];        
 
         $postData = json_encode($postDataArray);
         $response = $this->SensfrxHelper->__post("https://a.sensfrx.ai/v1/register", $postData);
@@ -1863,7 +1907,7 @@ class SensfrxPlugin extends Plugin
             $deviceName = isset($response['result']['device']['name']) ? $response['result']['device']['name'] : '';
             $deviceIp = isset($response['result']['device']['ip']) ? $response['result']['device']['ip'] : '';
             $deviceLocation = isset($response['result']['device']['location']) ? $response['result']['device']['location'] : '';
-            $userid = isset($UserRecord->id) ? (int)$UserRecord->id : null;
+            $userid = isset($UserRecord->id) ? (int)$UserRecord->id : null;              
             $CurPageURL = "https://" . $_SERVER["SERVER_NAME"];
             $encryptredUserid = $this->SensfrxHelper->getEncryptedHash($userid);
             $allowurl = $CurPageURL . '/blesta/client/login?allow=true&deviceId=' . $deviceId . '&verify=' . $encryptredUserid;
@@ -1905,9 +1949,7 @@ class SensfrxPlugin extends Plugin
                 $this->Record->set("sensfrx_log_type", "New Account")->set("sensfrx_log1", $insert_data)->set("created_at", date('Y-m-d H:i:s'))->insert("sensfrx_real_activity");
             } else {
                 $status = $response["result"]["status"];
-                $severity = $response["result"]["severity"];    
-                // $status = 'deny';
-                // $severity = 'critical';
+                $severity = $response["result"]["severity"];                    
 
                 $sensfrx_approve = (in_array($status, ["allow", "challenge", "low"]) ? "approved" : $status);
 
@@ -1929,10 +1971,12 @@ class SensfrxPlugin extends Plugin
                 }
                 if ($status == 'challenge' && $severity == 'high') {
                     if (isset($policySettings["registrationChallenge"]) && $policySettings["registrationChallenge"] == 'on') {
+                        $this->Record->insert("sensfrx_fraud_registration", [
+                            "email" => $params["vars"]["email"]
+                        ]);
                         $insert_data = $params["vars"]["email"] . " attempted to register in on " . date('Y-m-d H:i:s') . ". The new account was " . $sensfrx_approve . " due to risk score level of " . $severity . ".";
                         $this->Record->set("sensfrx_log_type", "New Account")->set("sensfrx_log1", $insert_data)->set("created_at", date('Y-m-d H:i:s'))->insert("sensfrx_real_activity");
-                        $this->SensfrxHelper->sendEmail('clientRegisterChallengeEmail', $emailBodyChallengeArray);
-                        return;
+                        $this->SensfrxHelper->sendEmail('clientRegisterChallengeEmail', $emailBodyChallengeArray);                                                                           
                     } else {
                         $insert_data = "User " . $params["vars"]["email"] . " attempted a register in on " . date('Y-m-d H:i:s') . ". Sensfrx flagged the log in with a " . $severity . " risk score. However, since your Registration Security policy [ Challenge ] is turned off, the registration was approved.";
                         $this->Record->set("sensfrx_log_type", "New Account")->set("sensfrx_log1", $insert_data)->set("created_at", date('Y-m-d H:i:s'))->insert("sensfrx_real_activity");
@@ -1941,29 +1985,12 @@ class SensfrxPlugin extends Plugin
                 }
                 if ($status == "deny" && $severity == "critical") {
                     if (isset($policySettings["registrationDeny"]) && $policySettings["registrationDeny"] == 'on') {
+                        $this->Record->insert("sensfrx_fraud_registration", [
+                            "email" => $params["vars"]["email"]
+                        ]);
                         $insert_data = $params["vars"]["email"] . " attempted to register in on " . date('Y-m-d H:i:s') . ". The new account was " . $sensfrx_approve . " due to risk score level of " . $severity . ".";
-                        $this->Record->set("sensfrx_log_type", "New Account")->set("sensfrx_log1", $insert_data)->set("created_at", date('Y-m-d H:i:s'))->insert("sensfrx_real_activity");
-                        
-                        $this->SensfrxHelper->sendEmail('clientRegisterDenyEmail', $emailBodyDenyArray);
-                        if (
-                            (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
-                            $_SERVER['SERVER_PORT'] == 443 ||
-                            (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')
-                        ) {
-                            $protocol = "https://";
-                        } else {
-                            $protocol = "http://";
-                        }
-                        $domain = $_SERVER['HTTP_HOST'];
-                        $base_url = $protocol . $domain . "/";
-                        $login_url = $base_url . "blesta/client/login";
-                        if (!session_id()) {
-                            session_start();
-                        }
-                        $this->Session->clear();
-                        $this->Session->write('error_message', 'Sensfrx - Registration cannot be completed due to detected fraudulent activity.');                                                             
-                        header("Location: " . $login_url);
-                        exit;                                            
+                        $this->Record->set("sensfrx_log_type", "New Account")->set("sensfrx_log1", $insert_data)->set("created_at", date('Y-m-d H:i:s'))->insert("sensfrx_real_activity");                        
+                        $this->SensfrxHelper->sendEmail('clientRegisterDenyEmail', $emailBodyDenyArray);                                                               
                     } else {
                         $insert_data = "User " . $params["vars"]["email"] . " attempted a register in on " . date('Y-m-d H:i:s') . ". Sensfrx flagged the log in with a " . $severity . " risk score. However, since your Registration Security policy [ Deny ] is turned off, the registration was approved.";
                         $this->Record->set("sensfrx_log_type", "New Account")->set("sensfrx_log1", $insert_data)->set("created_at", date('Y-m-d H:i:s'))->insert("sensfrx_real_activity");

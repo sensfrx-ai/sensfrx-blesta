@@ -8,9 +8,60 @@ endif;
 
 require __DIR__ . "/default/navbar.pdt";
 ?>
+<style>
+    .nave-top-sensfrx a.btn.active,
+    .nave-top-sensfrx a.btn.active:hover {
+        background-color: #0254ff !important;
+        color: #fff !important;
+    }
 
+    .nave-top-sensfrx .navbar-inverse {
+        background-color: #f5f8fd;
+        border-color: #f5f8fd;
+    }
+
+   /* .common_box_content {
+        background-color: #fff;
+        border: 1px solid #CACBCF66;
+        margin-top: 40px;
+        padding: 20px 40px 45px;
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }*/
+
+    .profile-form {
+        padding: 40px;
+        max-width: 800px;
+    }
+
+    .form-heading {
+        font-size: 30px;
+        font-weight: 600;
+        line-height: 36px;
+        text-align: left;
+        color: #03060B;
+        text-transform: capitalize;
+    }
+
+    .popup-form.open form#editForm .form-label {
+        font-size: 16px;
+        padding-bottom: 8px;
+        color: #03060B;
+    }
+    .btn-submit, .btn-cancel{
+           box-shadow: 0px 16px 20px -10px #00000033;
+        width: 190px;
+        max-width: fit-content;
+        height: 47px;
+        background-color: #0254FF;
+        color: #FFFFFF;
+        font-size: 16px !important;
+        font-weight: 700;
+        line-height: 19.2px;
+        text-align: center;
+    }
+</style>
 <div class="common_box_content">
-
 
     <?php
     // echo "<pre>";
@@ -63,12 +114,14 @@ require __DIR__ . "/default/navbar.pdt";
                 <div class="gender-options">
                     <label class="gender-label">
                         <input type="radio" name="sex" value="m" <?php echo
-                            ($result_Profile["result"]["data"]["sex"]=='m' ) ? 'checked' : '' ; ?> class="gender-radio">
+                            ($result_Profile["result"]["data"]["sex"]=='m' ) ? 'checked' : '' ; ?>
+                            class="gender-radio">
                         <?php echo Language::_('SensfrxPlugin.profile_info.heading5', true); ?>
                     </label>
                     <label class="gender-label">
                         <input type="radio" name="sex" value="f" <?php echo
-                            ($result_Profile["result"]["data"]["sex"]=='f' ) ? 'checked' : '' ; ?> class="gender-radio">
+                            ($result_Profile["result"]["data"]["sex"]=='f' ) ? 'checked' : '' ; ?>
+                            class="gender-radio">
                         <?php echo Language::_('SensfrxPlugin.profile_info.heading6', true); ?>
                     </label>
                 </div>
@@ -79,7 +132,8 @@ require __DIR__ . "/default/navbar.pdt";
                 <label for="email" class="form-label">
                     <?php echo Language::_('SensfrxPlugin.profile_info.heading7', true); ?>
                 </label>
-                <input type="email" name="email" id="email" value="<?php echo $result_Profile["result"]["data"]["email"]; ?>" class="form-input" required>
+                <input type="email" name="email" id="email"
+                    value="<?php echo $result_Profile["result"]["data"]["email"]; ?>" class="form-input" required>
             </div>
 
             <!-- Phone Field -->
@@ -113,7 +167,8 @@ require __DIR__ . "/default/navbar.pdt";
                 <label for="brand_name" class="form-label">
                     <?php echo Language::_('SensfrxPlugin.profile_info.heading10', true); ?>
                 </label>
-                <input type="text" name="brand_name" id="brand_name" value="<?php echo $result_Profile["result"]["data"]['brand_name']; ?>" class="form-input" required>
+                <input type="text" name="brand_name" id="brand_name"
+                    value="<?php echo $result_Profile["result"]["data"]['brand_name']; ?>" class="form-input" required>
             </div>
 
             <!-- Brand URL Field -->
@@ -121,7 +176,8 @@ require __DIR__ . "/default/navbar.pdt";
                 <label for="brand_url" class="form-label">
                     <?php echo Language::_('SensfrxPlugin.profile_info.heading11', true); ?>
                 </label>
-                <input type="url" name="brand_url" id="brand_url" value="<?php echo $result_Profile["result"]["data"]['brand_url']; ?>" class="form-input" required>
+                <input type="url" name="brand_url" id="brand_url"
+                    value="<?php echo $result_Profile["result"]["data"]['brand_url']; ?>" class="form-input" required>
             </div>
 
             <!-- Organization Name Field -->
@@ -129,7 +185,8 @@ require __DIR__ . "/default/navbar.pdt";
                 <label for="org_name" class="form-label">
                     <?php echo Language::_('SensfrxPlugin.profile_info.heading12', true); ?>
                 </label>
-                <input type="text" name="org_name" id="org_name" value="<?php echo $result_Profile["result"]["data"]['org_name']; ?>" class="form-input" required>
+                <input type="text" name="org_name" id="org_name"
+                    value="<?php echo $result_Profile["result"]["data"]['org_name']; ?>" class="form-input" required>
             </div>
 
             <!-- Error Message -->
@@ -149,82 +206,85 @@ require __DIR__ . "/default/navbar.pdt";
         </form>
     </div>
 
-
-    <div class="my-4">
-        <div class="card mt-5 profile-card-info">
-            <div class="card-header">
-                <?php echo Language::_('SensfrxPlugin.profile_info.heading16', true); ?>
-                <button class="sensfrx-profile-edit-button" id="editButton">
-                    <?php echo Language::_('SensfrxPlugin.profile_info.heading', true); ?>
-                </button>
-
-            </div>
-            <div class="card-body">
-
-                <div class="form-group row">
-                    <label for="clientId" class="col-lg-6 col-form-label">
-                        <?php echo Language::_('SensfrxPlugin.profile_info.heading17', true); ?>
-                    </label>
-                    <div class="col-lg-6 mt-2">
-                        <?php echo $result_Profile["result"]["data"]["fname"] . " " . $result_Profile["result"]["data"]["lname"] ?>
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label for="clientId" class="col-lg-6 col-form-label">
-                        <?php echo Language::_('SensfrxPlugin.profile_info.heading18', true); ?>
-                    </label>
-                    <div class="col-lg-6 mt-2">
-                        <?php echo ($result_Profile["result"]["data"]["sex"] == '') ? "--" : (($result_Profile["result"]["data"]["sex"] == 'm') ? 'Male' : 'Female'); ?>
+    <div class=row">
+        <div class="col-md-6">
+            <div class="my-4">
+                <div class="card mt-5 profile-card-info">
+                    <div class="card-header">
+                        <?php echo Language::_('SensfrxPlugin.profile_info.heading16', true); ?>
+                        <button class="sensfrx-profile-edit-button" id="editButton">
+                            <?php echo Language::_('SensfrxPlugin.profile_info.heading', true); ?>
+                        </button>
 
                     </div>
-                </div>
-                <div class="form-group row">
-                    <label for="clientId" class="col-lg-6 col-form-label">
-                        <?php echo Language::_('SensfrxPlugin.profile_info.heading19', true); ?>
-                    </label>
-                    <div class="col-lg-6 mt-2">
-                        <?php echo $result_Profile["result"]["data"]["email"] ?>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="clientId" class="col-lg-6 col-form-label">
-                        <?php echo Language::_('SensfrxPlugin.profile_info.heading20', true); ?>
-                    </label>
-                    <div class="col-lg-6 mt-2">
-                        <?php echo $result_Profile["result"]["data"]["phone"] ?>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="clientId" class="col-lg-6 col-form-label">
-                        <?php echo Language::_('SensfrxPlugin.profile_info.heading21', true); ?>
-                    </label>
-                    <div class="col-lg-6 mt-2">
-                        <?php echo $result_Profile["result"]["data"]["timezone"] ?>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="clientId" class="col-lg-6 col-form-label">
-                        <?php echo Language::_('SensfrxPlugin.profile_info.heading22', true); ?>
-                    </label>
-                    <div class="col-lg-6 mt-2">
-                        <?php echo ($result_Profile["result"]["data"]["brand_name"] == '') ? "--" : $result_Profile["result"]["data"]["brand_name"] ?>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="clientId" class="col-lg-6 col-form-label">
-                        <?php echo Language::_('SensfrxPlugin.profile_info.heading23', true); ?>
-                    </label>
-                    <div class="col-lg-6 mt-2">
-                        <?php echo ($result_Profile["result"]["data"]["brand_url"] == '') ? "--" : $result_Profile["result"]["data"]["brand_url"] ?>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="clientId" class="col-lg-6 col-form-label">
-                        <?php echo Language::_('SensfrxPlugin.profile_info.heading24', true); ?>
-                    </label>
-                    <div class="col-lg-6 mt-2">
-                        <?php echo ($result_Profile["result"]["data"]["org_name"] == '') ? "--" : $result_Profile["result"]["data"]["org_name"] ?>
+                    <div class="card-body">
+
+                        <div class="form-group row">
+                            <label for="clientId" class="col-lg-6 col-form-label">
+                                <?php echo Language::_('SensfrxPlugin.profile_info.heading17', true); ?>
+                            </label>
+                            <div class="col-lg-6 mt-2">
+                                <?php echo $result_Profile["result"]["data"]["fname"] . " " . $result_Profile["result"]["data"]["lname"] ?>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="clientId" class="col-lg-6 col-form-label">
+                                <?php echo Language::_('SensfrxPlugin.profile_info.heading18', true); ?>
+                            </label>
+                            <div class="col-lg-6 mt-2">
+                                <?php echo ($result_Profile["result"]["data"]["sex"] == '') ? "--" : (($result_Profile["result"]["data"]["sex"] == 'm') ? 'Male' : 'Female'); ?>
+
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="clientId" class="col-lg-6 col-form-label">
+                                <?php echo Language::_('SensfrxPlugin.profile_info.heading19', true); ?>
+                            </label>
+                            <div class="col-lg-6 mt-2">
+                                <?php echo $result_Profile["result"]["data"]["email"] ?>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="clientId" class="col-lg-6 col-form-label">
+                                <?php echo Language::_('SensfrxPlugin.profile_info.heading20', true); ?>
+                            </label>
+                            <div class="col-lg-6 mt-2">
+                                <?php echo $result_Profile["result"]["data"]["phone"] ?>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="clientId" class="col-lg-6 col-form-label">
+                                <?php echo Language::_('SensfrxPlugin.profile_info.heading21', true); ?>
+                            </label>
+                            <div class="col-lg-6 mt-2">
+                                <?php echo $result_Profile["result"]["data"]["timezone"] ?>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="clientId" class="col-lg-6 col-form-label">
+                                <?php echo Language::_('SensfrxPlugin.profile_info.heading22', true); ?>
+                            </label>
+                            <div class="col-lg-6 mt-2">
+                                <?php echo ($result_Profile["result"]["data"]["brand_name"] == '') ? "--" : $result_Profile["result"]["data"]["brand_name"] ?>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="clientId" class="col-lg-6 col-form-label">
+                                <?php echo Language::_('SensfrxPlugin.profile_info.heading23', true); ?>
+                            </label>
+                            <div class="col-lg-6 mt-2">
+                                <?php echo ($result_Profile["result"]["data"]["brand_url"] == '') ? "--" : $result_Profile["result"]["data"]["brand_url"] ?>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="clientId" class="col-lg-6 col-form-label">
+                                <?php echo Language::_('SensfrxPlugin.profile_info.heading24', true); ?>
+                            </label>
+                            <div class="col-lg-6 mt-2">
+                                <?php echo ($result_Profile["result"]["data"]["org_name"] == '') ? "--" : $result_Profile["result"]["data"]["org_name"] ?>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -232,33 +292,26 @@ require __DIR__ . "/default/navbar.pdt";
     </div>
 </div>
 
-
-
-
-
 <script>
-    if ( window.history.replaceState ) { 
-        window.history.replaceState( null, null, window.location.href ); 
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
     }
-    $(document).ready(function () {
+    $(document).ready(function() {
         // Open the pop-up when the "Edit" button is clicked
-        $('#editButton').on('click', function () {
+        $('#editButton').on('click', function() {
             $('#popupForm').removeClass('closed').addClass('open').fadeIn();
         });
-
         // Close the pop-up when the "Cancel" button is clicked
-        $('.btn-cancel').on('click', function () {
+        $('.btn-cancel').on('click', function() {
             $('#popupForm').removeClass('open').addClass('closed').fadeOut(300);
         });
-
         // Optional: Close the form if the user clicks outside the pop-up
-        $(window).on('click', function (event) {
+        $(window).on('click', function(event) {
             if ($(event.target).is('#popupForm')) {
                 $('#popupForm').removeClass('open').addClass('closed').fadeOut(300);
             }
         });
     });
-
 
     function Profile(submitButton) {
         jQuery.ajax({
@@ -267,15 +320,12 @@ require __DIR__ . "/default/navbar.pdt";
             data: {
                 "AjaxCheck": "editDetails"
             },
-            beforeSend: function () { },
-            success: function (response) {
+            beforeSend: function() {},
+            success: function(response) {
                 console.log(response);
             },
-            complete: function () {
-
-            }
+            complete: function() {}
         });
-
     }
 
     function validateForm() {
@@ -289,9 +339,9 @@ require __DIR__ . "/default/navbar.pdt";
         var orgName = $('#org_name').val();
         var timezone = $('#timezone').val();
         var submitButton = $('#submitform');
-
         // Check if any required field is empty
-        if (name === "" || email === "" || selectedSex === "" || phone === "" || brandName === "" || brandUrl === "" || orgName === "" || timezone === "") {
+        if (name === "" || email === "" || selectedSex === "" || phone === "" || brandName === "" || brandUrl === "" ||
+            orgName === "" || timezone === "") {
             $('#errorMessage').show(); // Show error message
             return false; // Prevent form submission
         } else {
@@ -305,13 +355,11 @@ require __DIR__ . "/default/navbar.pdt";
         const editButton = document.getElementById('editButton');
         const submitButton = document.querySelector('.sensfrx-profile-submit-button');
         const formLine = document.querySelector('.sensfrx-profile-bold-line');
-
         editForm.style.display = 'none'; // Hide the edit form
         editButton.style.display = 'block'; // Show the edit button
         submitButton.style.display = 'none'; // Hide the submit button
         formLine.style.display = 'none'; // Hide the line with the form
     }
-
     // JavaScript function to close the form (example)
     function closeForm() {
         document.getElementById('editForm').reset(); // Optionally reset the form

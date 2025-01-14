@@ -35,6 +35,7 @@ $lang['Sensfrx.admin.dashboard.webhook.success'] = 'Webhook successfully added.'
 
 
 $lang['Sensfrx.admin.order_review.page_title'] = 'Overview | AuthSafe';
+$lang['Sensfrx.admin.account_review.page_title'] = 'Account Review | AuthSafe';
 $lang['Sensfrx.admin.activity.page_title'] = 'Activity | AuthSafe';
 $lang['Sensfrx.admin.validation_rules.page_title'] = 'Validation Rules | AuthSafe';
 $lang['Sensfrx.admin.policies_settings.page_title'] = 'Policies Settings | AuthSafe';

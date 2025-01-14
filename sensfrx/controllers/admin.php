@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 class Admin extends SensfrxController
 {
     public function preAction()
@@ -9,7 +11,7 @@ class Admin extends SensfrxController
         }
         $this->requireLogin();
         Loader::loadComponents($this, ['Session', "Record"]);
-        $this->uses(['Sensfrx.SaveManagePolicies', 'Sensfrx.SaveManageOptions',  'Sensfrx.SensfrxHelper', "Emails"]);
+        $this->uses(['Sensfrx.SaveManagePolicies', 'Sensfrx.SaveManageOptions', 'Sensfrx.SensfrxHelper', "Emails"]);
         /*  Restore structure view l0ocati.on of the admin portal */
         $this->structure->setDefaultView(APPDIR);
         Language::loadLang('sensfrx_plugin', null, PLUGINDIR . 'sensfrx' . DS . 'language' . DS);
@@ -209,8 +211,8 @@ class Admin extends SensfrxController
         $errorMessage = "";
         $matching_order_ids = array();
         $matching_invoice_ids = array();
-        $orderResponse["result"]["status"]  = "";
-        $orderResponse["result"]["message"]  = "";
+        $orderResponse["result"]["status"] = "";
+        $orderResponse["result"]["message"] = "";
         $resultPrivacyUpdate = [];
         /*   Set View */
         $this->view->setView('order_review', 'sensfrx.admin');
@@ -248,7 +250,7 @@ class Admin extends SensfrxController
                             "action" => $action,
                         ];
                     }
-                }               
+                }
             }
         } elseif (isset($_POST["AjaxCheck"]) && $_POST["AjaxCheck"] == "aprove/Reject") {
             $action = $_POST["action"];
@@ -274,7 +276,7 @@ class Admin extends SensfrxController
                     ->from("orders")
                     ->where("id", "=", $item)
                     ->fetch();
-            
+
                 if ($result && isset($result->invoice_id)) {
                     $matching_invoice_ids[] = $result->invoice_id;
                 }
@@ -304,18 +306,18 @@ class Admin extends SensfrxController
                         // print_r($postDataUpdate);
                         // echo '<br>';
                         // $invoiceId = substr($item["order_id"], 14);  /* Trim the first 14 digits */
-                        /* echo $invoiceId; */                        
+                        /* echo $invoiceId; */
                         $this->Record->where("invoice_id", "=", $item)->update("orders", array("status" => "accepted"));
                         //adding in activity tab      
-                        $current_date_ato = date('Y-m-d H:i:s'); 
+                        $current_date_ato = date('Y-m-d H:i:s');
                         // $trans_review_order_id = $this->Record
                         //     ->select("order_id") 
                         //     ->from("orders")
                         //     ->where("invoice_id", "=", $item)
                         //     ->fetch();      
-                        $invoice_id = $item;                 
+                        $invoice_id = $item;
                         $insert_data = "The order was approved successfully on " . $current_date_ato . " for Invoice ID - " . $invoice_id . ".";
-                        $this->Record->set("sensfrx_log_type", "Order Review")->set("sensfrx_log1", $insert_data)->set("created_at", date('Y-m-d H:i:s'))->insert("sensfrx_real_activity");                     
+                        $this->Record->set("sensfrx_log_type", "Order Review")->set("sensfrx_log1", $insert_data)->set("created_at", date('Y-m-d H:i:s'))->insert("sensfrx_real_activity");
                     }
                 }
                 if ($action == "reject") {
@@ -323,7 +325,7 @@ class Admin extends SensfrxController
                         // $invoiceId = substr($item["order_id"], 14);  /* Trim the first 14 digits */
                         /* echo $invoiceId; */
                         $this->Record->where("invoice_id", "=", $item)->update("orders", array("status" => "canceled"));
-                        $current_date_ato = date('Y-m-d H:i:s');                        
+                        $current_date_ato = date('Y-m-d H:i:s');
                         $invoice_id = $item;
                         $insert_data = "The order was rejected successfully on " . $current_date_ato . " for Invoice ID - " . $invoice_id . ".";
                         $this->Record->set("sensfrx_log_type", "Order Review")->set("sensfrx_log1", $insert_data)->set("created_at", date('Y-m-d H:i:s'))->insert("sensfrx_real_activity");
@@ -341,7 +343,7 @@ class Admin extends SensfrxController
                 die;
             }
         }
-        $response = $this->__sensfrxApiCallonURL("https://a.sensfrx.ai/v1/trans-review/", "GET", $postData, $headers);
+        $response = $this->__sensfrxApiCallonURL("https://a.sensfrx.ai/v1/trans-review/", "GET", $postData, $headers);        
 
         if ($response["code"] != 200) {
             $resultPrivacyUpdate["result"]["status"] = "fail";
@@ -365,6 +367,174 @@ class Admin extends SensfrxController
         $activePage = __FUNCTION__;
         /* Set variables all for the view at once */
         $this->set(compact("transactionDetails", "activePage", "errorMessage", "resultPrivacyUpdate", "orderResponse"));
+        /* Return view to be displayed */
+        return $this->view->fetch();
+    }
+
+    //account review tab
+    public function account_review()
+    {
+        $this->structure->set('page_title', Language::_('Sensfrx.admin.account_review.page_title', true));
+        $errorMessage = "";
+        $matching_registration_ids = array();
+        $matching_invoice_ids = array();
+        $accountResponse["result"]["status"] = "";
+        $accountResponse["result"]["message"] = "";
+        $resultPrivacyUpdate = [];
+        $newAccountData = [];
+        /*   Set View */
+        $this->view->setView('account_review', 'sensfrx.admin');
+        $view_url = Router::makeURI(str_replace('index.php/', '', WEBDIR) . $this->view->view_path . "assets/");
+
+        $sensfrxConfigData = $this->Record->select()->from("sensfrx_config")->fetch();
+
+        $hArray = $this->createHArray();
+        $postData = array();
+        $postData['h'] = $hArray;
+        $moduleDetails = $this->Record->select()->from("plugins")->where("dir", "=", "sensfrx")->fetch();
+
+        if ((!isset($sensfrxConfigData->property_id) || $sensfrxConfigData->property_id == "") || (!isset($sensfrxConfigData->property_secret) || $sensfrxConfigData->property_secret == "")) {
+            header("Location: " . $this->base_url . trim($this->base_uri, "/") . "/plugin/sensfrx/admin/dashboard");
+            exit();
+        } else {
+            $apikey = base64_encode($sensfrxConfigData->property_id . ":" . $sensfrxConfigData->property_secret);
+        }
+        $headers = [
+            "Authorization: Basic {$apikey}",
+            "Content-Type: application/json"
+        ];
+
+        if (isset($_POST["submitAccountReviewAll"])) {
+            if ($_POST["submitAccountReviewAll"] == "approveAll") {
+                $action = "approve";
+            } elseif ($_POST["submitAccountReviewAll"] == "rejectAll") {
+                $action = "reject";
+            }
+            if (in_array($action, ["approve", "reject"]) && $action != "") {
+                foreach ($_POST as $key => $item) {
+                    if (strpos($key, "Select_regId@@") !== false) {
+                        $newAccountData[] = [
+                            "reg_id" => $item,
+                            "action" => $action,
+                        ];
+                    }
+                }                              
+            }
+        } elseif (isset($_POST["AjaxCheck"]) && $_POST["AjaxCheck"] == "aprove/Reject") {
+            $action = $_POST["action"];
+            if (in_array($action, ["approve", "reject"]) && $action != "") {
+                $newAccountData[] = [
+                    "reg_id" => $_POST["reg_id"],
+                    "action" => $_POST["action"],
+                ];
+            }
+        }        
+        if (!empty($newAccountData)) {            
+            $reg_ids = array_column($newAccountData, "reg_id");
+            $response = $this->__sensfrxApiCallonURL("https://a.sensfrx.ai/v1/reg-review/", "GET", $postData, $headers);
+            foreach ($response['result']['data'] as $registration) {  
+                if (in_array($registration['registration_id'], $reg_ids)) { 
+                    $matching_registration_ids[] = $registration['email'];
+                }
+            }                    
+        }        
+        if (!empty($newAccountData)) {
+            $postDataUpdate["data"] = $newAccountData;
+            $postDataUpdate["h"] = $hArray;
+            $updateResponse = $this->__sensfrxApiCallonURL("https://a.sensfrx.ai/v1/reg-review/", "POST", json_encode($postDataUpdate), $headers);
+            // $updateResponse = array(
+            //     "code" => 200,
+            //     "result" => array(
+            //         "status" => "success",
+            //         "message" => "Transaction approved successfully!"
+            //     )
+            // );             
+            if ($updateResponse["code"] != 200) {
+                $accountResponse["result"]["status"] = "fail";
+                $accountResponse["result"]["message"] = "Somthing went wrong";
+            } else {                
+                if ($action == "approve") {                    
+                    foreach ($matching_registration_ids as $item) {  
+                        $fraud_clients = $this->Record->select(["clients.id", "clients.status", "contacts.email"])
+                        ->from("clients")
+                        ->innerJoin("contacts", "contacts.client_id", "=", "clients.id", false)
+                        ->where("clients.status", "=", "fraud")
+                        ->fetchAll();
+
+                        foreach ($fraud_clients as $fraud_client) {                            
+                            if ($fraud_client->email == $item) {
+                                $this->Record->where("id", "=", $fraud_client->id)
+                                ->update("clients", ["status" => "active"]);
+                            }
+                        }
+    
+                        $current_date_ato = date('Y-m-d H:i:s');                           
+                        $emailaccount = $item;
+                        $insert_data = "The account was approved successfully on " . $current_date_ato . " for Email ID " . $emailaccount . ".";
+                        $this->Record->set("sensfrx_log_type", "Account Review")->set("sensfrx_log1", $insert_data)->set("created_at", date('Y-m-d H:i:s'))->insert("sensfrx_real_activity");
+                    }
+                }
+                if ($action == "reject") {
+                    foreach ($matching_registration_ids as $item) { 
+                        $fraud_clients = $this->Record->select(["clients.id", "clients.status", "contacts.email"])
+                        ->from("clients")
+                        ->innerJoin("contacts", "contacts.client_id", "=", "clients.id", false)
+                        ->where("clients.status", "=", "fraud")
+                        ->fetchAll();
+
+                        foreach ($fraud_clients as $fraud_client) {
+                            
+                            if ($fraud_client->email == $item) {
+                                $this->Record->where("id", "=", $fraud_client->id)
+                                ->update("clients", ["status" => "inactive"]);
+                            }
+                        }
+                        
+                        $current_date_ato = date('Y-m-d H:i:s');
+                        $emailaccount = $item;
+                        $insert_data = "The account was rejected successfully on " . $current_date_ato . " for Email ID " . $emailaccount . ".";
+                        $this->Record->set("sensfrx_log_type", "Account Review")->set("sensfrx_log1", $insert_data)->set("created_at", date('Y-m-d H:i:s'))->insert("sensfrx_real_activity");
+                    }
+                }
+                $accountResponse["result"]["status"] = "success";
+                $accountResponse["result"]["message"] = $updateResponse["result"]["message"];
+                /* print_r($action);
+                print_r("success"); */
+            }
+
+            if (isset($_POST["AjaxCheck"]) && $_POST["AjaxCheck"] == "aprove/Reject") {
+
+                echo json_encode($accountResponse);
+                die;
+            }
+        }
+        $response = $this->__sensfrxApiCallonURL("https://a.sensfrx.ai/v1/reg-review/", "GET", $postData, $headers);
+        //print_r($response);
+        //print_r($updateResponse);
+
+        if ($response["code"] != 200) {
+            $resultPrivacyUpdate["result"]["status"] = "fail";
+            $resultPrivacyUpdate["result"]["message"] = "Not Authorized";
+        }
+
+        if ($response["code"] != "200") {
+            $errorMessage = empty($response["result"]) ? "Unexpected Error occurs!" : $response["result"];
+        }
+        $registrationDetails = isset($response["result"]) ? $response["result"] : [];
+        //print_r($registrationDetails);
+
+        $this->set(
+            "assets",
+            [
+                "stylesheet" => [
+                    $view_url . 'css/style.css',
+                ]
+            ]
+        );
+
+        $activePage = __FUNCTION__;
+        /* Set variables all for the view at once */
+        $this->set(compact("registrationDetails", "activePage", "errorMessage", "resultPrivacyUpdate", "accountResponse"));
         /* Return view to be displayed */
         return $this->view->fetch();
     }
@@ -499,7 +669,7 @@ class Admin extends SensfrxController
             $postDataProfile = json_encode($postDataProfile);
             $response = $this->__sensfrxApiCallonURL("https://a.sensfrx.ai/v1/shadow", "POST", $postDataProfile, $headers);
             if ($response["code"] != "200") {
-                $_POST["shadow_mode"] =  $_POST["shadow_mode"] == "on" ? "" : "on";
+                $_POST["shadow_mode"] = $_POST["shadow_mode"] == "on" ? "" : "on";
                 $errorMessage = empty($response["result"]) ? "Unexpected Error occurs!" : $response["result"];
             }
 
@@ -567,7 +737,7 @@ class Admin extends SensfrxController
         if (isset($_POST["UpdateNotificationsSetting"])) {
             $riskThreshold = $_POST["emailCheckbox"] == "on" ? '1' : '0';
             $postDataArray = [
-                "h"  => $hArray,
+                "h" => $hArray,
                 "enabled" => $riskThreshold,
                 "risk_threshold" => $_POST["threshold"],
                 "email" => $_POST["emailInput"],
@@ -693,7 +863,7 @@ class Admin extends SensfrxController
         if (isset($_POST["email"]) && isset($_POST["declaration"]) && isset($_POST["privacyUpdate"])) {
             $_POST["declaration"] = $_POST["declaration"] == 'on' ? 1 : 0;
             $postDataArray = [
-                "h"  => $hArray,
+                "h" => $hArray,
                 "privacy_email" => $_POST["email"],
                 "privacy_consent" => $_POST["declaration"],
             ];
@@ -948,7 +1118,7 @@ class Admin extends SensfrxController
     private function apiCall($url = "")
     {
         $config_options = $this->SaveManageOptions->get();
-        if (isset($config_options->property_id) && !empty($config_options->property_id) && isset($config_options->property_secret) && !empty($config_options->property_secret)) :
+        if (isset($config_options->property_id) && !empty($config_options->property_id) && isset($config_options->property_secret) && !empty($config_options->property_secret)):
             $curl = curl_init();
             $curl_fields = array(
                 CURLOPT_URL => $url,
@@ -973,11 +1143,11 @@ class Admin extends SensfrxController
                 if ($response == "" || empty($response)) {
                     return [
                         "status" => "error",
-                        "message"  => Language::_(
+                        "message" => Language::_(
                             'Sensfrx.admin.dashboard.webhook.error.api',
                             true
                         ),
-                        "httpcode"  => $httpcode,
+                        "httpcode" => $httpcode,
                         "api_response" => $response
                     ];
                 } else {
@@ -985,24 +1155,24 @@ class Admin extends SensfrxController
                     if (!is_array($responseData)) {
                         return [
                             "status" => "error",
-                            "message"  => $response
+                            "message" => $response
                         ];
                     } else {
                         return $responseData;
                     }
                 }
             } else {
-                return   [
+                return [
                     "status" => "error",
-                    "httpcode"  => $httpcode,
+                    "httpcode" => $httpcode,
                     "api_response" => $response,
-                    "message"  => $httpcode . ": " . $response,
+                    "message" => $httpcode . ": " . $response,
                 ];
             }
-        else :
+        else:
             return [
                 "status" => "error",
-                "message"  => Language::_(
+                "message" => Language::_(
                     'Sensfrx.admin.dashboard.webhook.error.property',
                     true
                 )

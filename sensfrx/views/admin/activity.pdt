@@ -28,6 +28,68 @@ require __DIR__ . "/default/navbar.pdt";
     background-color: #f8d7da;
     border-color: #f5c6cb;
 }
+.nave-top-sensfrx a.btn.active,
+.nave-top-sensfrx a.btn.active:hover {
+  background-color: #0254ff !important;
+  color: #fff !important;
+}
+.nave-top-sensfrx .navbar-inverse {
+  background-color: #f5f8fd;
+  border-color: #f5f8fd;  
+}
+  .section-title {
+        font-size: 30px;
+        font-weight: 600;
+        line-height: 36px;
+        text-align: left;
+        color: #03060B;
+        text-transform: capitalize;
+        background-color: #fff;
+        border: 1px solid #fff;
+        margin: 12px 0 20px 0;
+        padding: 0;
+    }
+
+   .card {
+        border: none;
+    }
+.card-body, .panel .panel-body {
+   
+    padding:0 1.25rem 1.25rem;
+}
+table#activity.table-as1 th{
+    background-color: #1D2327 !important;
+}
+    table#activity.table-as1 {
+        border: 1px solid #E5E5E5;
+        border-radius: 6px;
+    }
+
+    table#activity.table-as1 thead {
+        background-color: #1D2327;
+    }
+
+    table#activity.table-as1 thead tr th {
+        padding: 15px 0 15px 15px !important;
+        text-align: left !important;
+        font-size: 16px;
+        font-weight: 900;
+        line-height: 19.2px;
+        color: #fff;
+    }
+
+    table#activity.table-as1 tbody tr td {
+        padding: 12px 0 12px 15px !important;
+        text-align: left !important;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 19.2px;
+    }
+  table.dataTable thead > tr > th.dt-orderable-asc span.dt-column-order:before, table.dataTable thead > tr > th.dt-orderable-asc span.dt-column-order:after, table.dataTable thead > tr > th.dt-orderable-desc span.dt-column-order:before, table.dataTable thead > tr > th.dt-orderable-desc span.dt-column-order:after{
+        font-size: 0.6em !important;
+    opacity: 60% !important;
+    margin-top: 2px;
+   }
 </style>
 <?php
 if (isset($resultPrivacyUpdate["result"]) && !empty($resultPrivacyUpdate["result"])) :
@@ -57,14 +119,13 @@ endif;
 <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
 
 <div class="card">
-    <div class="card-header">
-        <h2><span><?php echo Language::_('SensfrxPlugin.activity.heading', true); ?></span></h2>
-    </div>
+   
     <div class="card-body">
-        <table id="activity" class="display" style="width:100%">
+    <h2 class="section-title"><?php echo Language::_('SensfrxPlugin.activity.heading', true); ?></h2>
+        <table id="activity" class="display table-as1" style="width:100%">
             <thead>
                 <tr>
-                    <th><?php echo Language::_('SensfrxPlugin.activity.table.heading1', true); ?></th>
+                    <th width="12%"><?php echo Language::_('SensfrxPlugin.activity.table.heading1', true); ?></th>
                     <th><?php echo Language::_('SensfrxPlugin.activity.table.heading2', true); ?></th>
                     <th><?php echo Language::_('SensfrxPlugin.activity.table.heading3', true); ?></th>
                     <th><?php echo Language::_('SensfrxPlugin.activity.table.heading4', true); ?></th>

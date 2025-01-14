@@ -62,6 +62,76 @@ require __DIR__ . "/default/navbar.pdt";
             background-color: #f8d7da;
             border-color: #f5c6cb;
         }
+        .nave-top-sensfrx a.btn.active,
+.nave-top-sensfrx a.btn.active:hover {
+  background-color: #0254ff !important;
+  color: #fff !important;
+}
+.nave-top-sensfrx .navbar-inverse {
+  background-color: #f5f8fd;
+  border-color: #f5f8fd;  
+}
+ table#packages.table-as1 {
+        border: 1px solid #E5E5E5;
+        border-radius: 0px;
+        margin-top:40px;
+    }
+
+    table#packages.table-as1 thead {
+        background-color: #1D2327;
+    }
+
+    table#packages.table-as1 thead tr {
+        color: #fff;
+    }
+
+    table#packages.table-as1 thead tr th {
+        padding: 15px 0 15px 15px !important;
+        text-align: left !important;
+        font-size: 16px;
+        font-weight: 900;
+        line-height: 19.2px;
+    }
+table#packages th{
+    background-color: #1D2327;
+    color: #fff;
+}
+    table#packages.table-as1 tbody tr td {
+        padding: 12px 0 12px 15px !important;
+        text-align: left !important;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 19.2px;
+    }
+
+    div.dt-container.dt-empty-footer tbody>tr:last-child>* {
+        border-bottom: 0px !important;
+    }
+    input[type=checkbox] {
+    border: 1.5px solid #EBEBEB;
+    width: 18px;
+    height: 18px;
+}
+.common_box_content{
+       padding: 0 30px;
+}
+.btn-update-validation{
+    box-shadow: 0px 16px 20px -10px #00000033;
+        width: 260px;
+        max-width: fit-content;
+        height: 47px;
+        background-color: #0254FF;
+        color: #FFFFFF;
+        font-size: 16px !important;
+        font-weight: 700;
+        line-height: 19.2px;
+        text-align: center;
+        margin-top: 20px;
+        padding: 10px;
+}
+table#packages th:first-child{
+    width: 10%;
+}
 </style>
 
 
@@ -83,7 +153,7 @@ if (!empty($errorMessage)) {
 
     <div class="common_box_content">
         <form method="post" action="">
-            <table class="table" id="packages">
+            <table class="table table-as1" id="packages">
                 <thead>
                     <tr class="heading_row">
                         <th>Count</th>
@@ -121,7 +191,7 @@ if (!empty($errorMessage)) {
 
 
             <div class="mt-4 float-right">
-                <input type="submit" name="update" value="Update Validation Rules" class="btn btn-primary">
+                <input type="submit" name="update" value="Update Validation Rules" class="btn btn-primary btn-update-validation">
             </div>
 
         </form>
