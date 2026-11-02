@@ -404,10 +404,10 @@ input:checked + .slider:before {
 } */
 table {
   margin: 0 auto;
-  width: 100%;
+  /* width: 100%; */
   clear: both;
-  border-collapse: collapse;
-  table-layout: fixed;
+  /* border-collapse: collapse; */
+  table-layout: auto;
   word-wrap: break-word;
 }
 .datepicker {
@@ -419,6 +419,7 @@ table {
   padding-left: 0;
   margin-bottom: 0;
   list-style: none;
+  gap: 20px 0;
 }
 .nav > li {
   position: relative;

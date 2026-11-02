@@ -70,8 +70,7 @@ class SaveManageOptions extends SensfrxModel
             } else {
                 throw new Exception("Invalid request type: {$requestType}");
             }
-
-            $post_data = "{\r\n    \"app_type\": \"WHMCS\",\r\n    \"app_version\": \"{$version}\",\r\n    \"domain\": \"{$domain}\"\r\n}";
+            $post_data = "{\r\n    \"app_type\": \"Blesta\",\r\n    \"app_version\": \"{$version}\",\r\n    \"domain\": \"{$domain}\"\r\n}";
             $headers = [
                 "Authorization: Basic {$api_key}",
                 "Content-Type: application/json",
@@ -104,9 +103,7 @@ class SaveManageOptions extends SensfrxModel
             if (isset($ch)) {
                 curl_close($ch);
             }
-
             return $error_message;
         }
     }
-
 }
