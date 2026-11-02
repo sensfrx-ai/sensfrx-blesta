@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Feed Reader Feeds
  *
@@ -36,9 +37,9 @@ class SensfrxApi extends SensfrxModel
         $hostname = isset($company->hostname)
             ? $company->hostname
             : '';
-        $this->client_uri=(isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) ? 'https://' : 'http://').$company->hostname . $webdir . Configure::get('Route.client') . '/';
-        
+        $this->client_uri=(isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) ? 'https://' : 'http://').$company->hostname . $webdir . Configure::get('Route.client') . '/';        
     }
+
     public function logoutTrack()
     {
         $device_id=false;
@@ -54,8 +55,7 @@ class SensfrxApi extends SensfrxModel
         }
         try {
             $login_status=false;
-            $client_info=[];
-            
+            $client_info=[];            
             $user_info=false;
             $response=[];
             $param=[];
@@ -168,7 +168,6 @@ class SensfrxApi extends SensfrxModel
     }
     public function apiCall($param=[], $url="")
     {
-
         $config_options=$this->SaveManageOptions->get();
         $response=[];
         $response["httpcode"] = 0;
@@ -224,8 +223,7 @@ class SensfrxApi extends SensfrxModel
                 "status" => ($httpcode==200?'success':'error'),
                 "group" => '1',
             ];
-            $this->Logs->addModule($outputLogging);
-        
+            $this->Logs->addModule($outputLogging);        
             $policies=$this->SaveManagePolicies->get();
             if (isset($policies->shadow) && ($policies->shadow == 1 || $policies->shadow =='1')) {
                 return ['status' => "shadow", "message"=> "Shadow Mode Enabled"];
@@ -258,8 +256,7 @@ class SensfrxApi extends SensfrxModel
                     "httpcode"  => $httpcode,
                     "api_response" => $response
                 ];
-            }
-            
+            }            
         else :
             return [
                 "status" => "error",
@@ -267,6 +264,7 @@ class SensfrxApi extends SensfrxModel
             ];
         endif;
     }
+
     public function resetPasswordEmail($client_id=false, $params=[])
     {
         $client = $this->Clients->get($client_id);
@@ -293,8 +291,7 @@ class SensfrxApi extends SensfrxModel
                         )
                     )
                 )
-            ];
-            
+            ];            
             $sent=$this->Emails->send(
                 'Sensfrx.reset_password',
                 $this->getCompanyId(),
@@ -310,10 +307,10 @@ class SensfrxApi extends SensfrxModel
         }
         return false;
     }
+
     private function getEncryptedHash($value='')
     {
         $ciphering = "AES-128-CTR";
-  
         // Use OpenSSl Encryption method
         $iv_length = openssl_cipher_iv_length($ciphering);
         // Non-NULL Initialization Vector for encryption
@@ -328,19 +325,19 @@ class SensfrxApi extends SensfrxModel
             )
         );
     }
+
     private function getDecryptedHash($value='')
     {
         $ciphering = "AES-128-CTR";
-        $decryption_iv = '1234567891011121';
-          
+        $decryption_iv = '1234567891011121';          
         // Store the decryption key
-        $decryption_key = "SensfrxEncryptedHash";
-          
+        $decryption_key = "SensfrxEncryptedHash";          
         // Use openssl_decrypt() function to decrypt the data
         return openssl_decrypt(
             base64_decode($value), $ciphering, $decryption_key, 0, $decryption_iv
         );
     }   
+    
     public function getCompanyId()
     {
         if (!empty(Configure::get('Blesta.company_id'))) {

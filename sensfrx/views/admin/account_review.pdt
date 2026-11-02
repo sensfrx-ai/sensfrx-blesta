@@ -1,6 +1,5 @@
 <?php
 
-
 if (count($assets["stylesheet"]) > 0) :
     foreach ($assets["stylesheet"] as $key => $css) :
         echo "<link rel='stylesheet' href='$css'>";
@@ -80,14 +79,14 @@ require __DIR__ . "/default/navbar.pdt";
         display: none;
     }
     .nave-top-sensfrx a.btn.active,
-    .nave-top-sensfrx a.btn.active:hover {
-        background-color: #0254ff !important;
-        color: #fff !important;
-    }
-    .nave-top-sensfrx .navbar-inverse {
-        background-color: #f5f8fd;
-        border-color: #f5f8fd;  
-    }
+.nave-top-sensfrx a.btn.active:hover {
+  background-color: #0254ff !important;
+  color: #fff !important;
+}
+.nave-top-sensfrx .navbar-inverse {
+  background-color: #f5f8fd;
+  border-color: #f5f8fd;  
+}
 </style>
 
 <?php
@@ -169,7 +168,7 @@ endif;
                         <tr>
                             <td><input type="checkbox" class="Select" name="Select_regId@@<?php echo $item['registration_id']; ?>" value="<?php echo $item['registration_id']; ?>"></td>
                             <td><?php echo $sr_no; ?></td>
-                            <td><?php echo $item["registration_id"]; ?></td>
+                            <td><?php echo $item["username"]; ?></td>
                             <td><?php echo $item["email"]; ?></td>
                             <td><?php echo $item["registration_score"]; ?></td>
                             <td><?php echo date('d-M-Y h:i A', strtotime($item['event_time'])); ?></td>
@@ -254,7 +253,7 @@ endif;
                                 }, 3000);
                                 console.log(response);
                             }
-                        },                                  
+                        },
                         complete: function() {
                             $('#accountReviewLoader').hide();
                         }

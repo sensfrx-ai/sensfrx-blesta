@@ -1,7 +1,4 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
 class Hooks extends SensfrxController
 {
@@ -18,15 +15,10 @@ class Hooks extends SensfrxController
     public function webhook()
     {
         $input = file_get_contents('php://input');
+        $this->verifySignature('webhook', $input);
         $data = json_decode($input, true);
-        // echo '<pre>';
-        // print_r($data);       
         $policySettings = $this->SensfrxHelper->getData("sensfrx_policies_setting", ["key" => "policies_settings"]);
-        $row_count = $this->Record->select(["COUNT(*)" => "total_rows"])
-            ->from("sensfrx_webhook")
-            ->fetch();
-        echo "Number of rows in the table: " . $row_count->total_rows;
-        if (count($data) > 0) {
+        if (is_array($data) && count($data) > 0) {
             if (isset($data["status"]) && !empty($data["status"]) && isset($data["severity"]) && !empty($data["severity"]) && isset($data["user"]) && !empty($data["user"])) {
                 $status  = $data['status'];
                 $severity  = $data['severity'];
@@ -41,11 +33,9 @@ class Hooks extends SensfrxController
                         ->where("sensfrx_user_id", "=", $userId)
                         ->fetch();
                     if ($existing) {
-                        echo "User ID already exists. No insertion performed.";
                     } else {
                         $this->Record->set("sensfrx_user_id", $userId)
                             ->insert("sensfrx_webhook");
-                        echo "User ID inserted successfully.";
                     }
                     $this->printJson(
                         [
@@ -60,12 +50,10 @@ class Hooks extends SensfrxController
                         ->where("sensfrx_user_id", "=", $userId)
                         ->fetch();
                     if ($existing) {
-                        echo "User ID deleted.";
                         $this->Record->from("sensfrx_webhook")
                             ->where("sensfrx_user_id", "=", $userId)
                             ->delete();
                     } else {                        
-                        echo "User ID not found.";
                     }
                     $this->printJson(
                         [
@@ -94,31 +82,25 @@ class Hooks extends SensfrxController
 
     public function transaction_webhook()
     {
-        $pluginData = $this->Record->select()->from("plugins")->where("name", "=", "Sensfrx")->numResults();
-        if ($pluginData > 0) {
-            $json_input = file_get_contents('php://input');
-            $data = json_decode($json_input, true);
-            // $data = [
-            //     "status" => "allow",
-            //     "severity" => "low",
-            //     "risk_score" => "0",
-            //     "transaction_id" => "20241122060703218",
-            // ];
-            $this->Record->insert("policies_setting", array("company_id" => "500", "key" => date("Y-m-d H:i:s", time())."tranection_webhook", "value" => json_encode($data)));
-            $order_id = $data['transaction_id'];
+        $json_input = file_get_contents('php://input');
+        $this->verifySignature('transaction_webhook', $json_input);
+        $data = json_decode($json_input, true);
+        if ( isset($data['status']) && isset($data['severity']) && isset($data['order_id']) && isset($data['risk_score']) ) {
+
+            $order_id = $data['order_id'];
             $order_risk_score = $data['risk_score'];
             if (isset($order_risk_score) && $order_risk_score == "0" && isset($data['status']) && $data['status'] == "allow") {
 
                 if ($order_id) {
-                    $invoiceId = substr($order_id, 14);
-                    
-                    $countOrders = $this->Record->select()->from("orders")->where("invoice_id", "=", $invoiceId)->fetch();
+                    $countOrders = $this->Record->select()->from("orders")->where("id", "=", $order_id)->fetch();
 
                     if ($countOrders->order_number > 0) {
-                        $response = $this->Record->where("invoice_id", "=", $invoiceId)->update("orders", array("status" => "accepted"));
-                        $this->Record->where("invoice_id", "=", $invoiceId)->insert("sensfrx_real_activity", array("sensfrx_log_type" => "Transection Webhook", "sensfrx_log1" => 'Order Number ' . $countOrders->order_number . ' status successfully updated to accepted', "created_at" => date("Y-m-d H:i:s", time())));
+                        $response = $this->Record->where("id", "=", $order_id)->update("orders", array("status" => "accepted"));
+                        $invoice_id = $this->Record->select("invoice_id")->from("orders")->where("id", "=", $order_id)->fetch();
+                        $this->Record->where("id", "=", $invoice_id->invoice_id)->update("invoices", ["status" => "active"]);
+                        $this->Record->where("id", "=", $order_id)->insert("sensfrx_real_activity", array("sensfrx_log_type" => "Transaction Webhook", "sensfrx_log1" => 'Order Number ' . $countOrders->order_number . ' status successfully updated to accepted', "created_at" => date("Y-m-d H:i:s", time())));
                     } else {
-                        $this->Record->where("invoice_id", "=", $invoiceId)->insert("sensfrx_real_activity", array("sensfrx_log_type" => "Transection Webhook", "sensfrx_log1" => 'Order Number ' . $countOrders->order_number . ' status update failed. No rows affected.', "created_at" => date("Y-m-d H:i:s", time())));
+                        $this->Record->where("id", "=", $order_id)->insert("sensfrx_real_activity", array("sensfrx_log_type" => "Transaction Webhook", "sensfrx_log1" => 'Order Number ' . $countOrders->order_number . ' status update failed. No rows affected.', "created_at" => date("Y-m-d H:i:s", time())));
                         $this->printJson(
                             [
                                 "status" => "error",
@@ -127,15 +109,16 @@ class Hooks extends SensfrxController
                         );
                     }
                 }
-            } else if (isset($order_risk_score) && $order_risk_score == "100" && isset($data['status']) && $data['status'] == "deny") {
+            } elseif (isset($order_risk_score) && $order_risk_score == "100" && isset($data['status']) && $data['status'] == "deny") {
                 if ($order_id) {
-                    $invoiceId = substr($order_id, 14);
-                    $countOrders = $this->Record->select()->from("orders")->where("invoice_id", "=", $invoiceId)->fetch();
+                    $countOrders = $this->Record->select()->from("orders")->where("id", "=", $order_id)->fetch();
                     if ($countOrders->order_number > 0) {
-                        $response = $this->Record->where("invoice_id", "=", $invoiceId)->update("orders", array("status" => "canceled"));
-                        $this->Record->where("invoice_id", "=", $invoiceId)->insert("sensfrx_real_activity", array("sensfrx_log_type" => "transection webhook", "sensfrx_log1" => 'Order Number ' . $countOrders->order_number . ' status successfully updated to canceled', "created_at" => date("Y-m-d H:i:s", time())));
+                        $response = $this->Record->where("id", "=", $order_id)->update("orders", array("status" => "canceled"));
+                        $invoice_id = $this->Record->select("invoice_id")->from("orders")->where("id", "=", $order_id)->fetch();
+                        $this->Record->where("id", "=", $invoice_id->invoice_id)->update("invoices", ["status" => "void"]);
+                        $this->Record->where("id", "=", $order_id)->insert("sensfrx_real_activity", array("sensfrx_log_type" => "transaction webhook", "sensfrx_log1" => 'Order Number ' . $countOrders->order_number . ' status successfully updated to canceled', "created_at" => date("Y-m-d H:i:s", time())));
                     } else {
-                        $this->Record->where("invoice_id", "=", $invoiceId)->insert("sensfrx_real_activity", array("sensfrx_log_type" => "transection webhook", "sensfrx_log1" => 'Order Number ' . $countOrders->order_number . ' status update failed. No rows affected.', "created_at" => date("Y-m-d H:i:s", time())));
+                        $this->Record->where("id", "=", $order_id)->insert("sensfrx_real_activity", array("sensfrx_log_type" => "transaction webhook", "sensfrx_log1" => 'Order Number ' . $countOrders->order_number . ' status update failed. No rows affected.', "created_at" => date("Y-m-d H:i:s", time())));
                         $this->printJson(
                             [
                                 "status" => "error",
@@ -152,15 +135,104 @@ class Hooks extends SensfrxController
                     ]
                 );
             }
-        } else {
-            $this->printJson(
-                [
-                    "status" => "error",
-                    "message" => "module Uninstalled",
-                ]
-            );
+            die;
         }
-        die;
+        if ( isset($data['status']) && isset($data['severity']) && isset($data['reg_id']) && isset($data['risk_score']) ) {
+            $email = $data['email'];
+            $reg_risk_score = $data['risk_score'];
+            if (isset($reg_risk_score) && $reg_risk_score == "0" && isset($data['status']) && $data['status'] == "allow") {
+                if ($email) {
+                    // Fetch client details using email
+                    $client = $this->Record
+                        ->select(["clients.id", "clients.status", "contacts.email"])
+                        ->from("clients")
+                        ->innerJoin("contacts", "contacts.client_id", "=", "clients.id", false)
+                        ->where("contacts.email", "=", $email)
+                        ->fetch();
+
+                    if ($client) { // If client exists
+                        // Update client status
+                        $this->Record->where("id", "=", $client->id)->update("clients", ["status" => "active"]);
+                        $this->Record->where("id", "=", $client->id)->insert("sensfrx_real_activity", array("sensfrx_log_type" => "Registration Webhook", "sensfrx_log1" => 'Client ID ' . $client->id . ' status successfully updated to active', "created_at" => date("Y-m-d H:i:s", time())));
+
+                        // Return success response
+                        $this->printJson([
+                            "status" => "success",
+                            "message" => "Client status updated successfully."
+                        ]);
+                    }
+                } else {
+                    $this->Record->where("email", "=", $email)->insert("sensfrx_real_activity", array("sensfrx_log_type" => "Registration Webhook", "sensfrx_log1" => 'Client Email ' . $email . ' status update failed. No rows affected.', "created_at" => date("Y-m-d H:i:s", time())));
+                    $this->printJson(
+                    [
+                            "status" => "error",
+                            "message" => "client not found",
+                        ]
+                    );
+                }            
+            } else if (isset($reg_risk_score) && $reg_risk_score == "100" && isset($data['status']) && $data['status'] == "deny") {
+                if ($email) {
+                    // Fetch client details using email
+                    $client = $this->Record
+                        ->select(["clients.id", "clients.status", "contacts.email"])
+                        ->from("clients")
+                        ->innerJoin("contacts", "contacts.client_id", "=", "clients.id", false)
+                        ->where("contacts.email", "=", $email)
+                        ->fetch();
+
+                    if ($client) { // If client exists
+                        // Update client status
+                        $this->Record->where("id", "=", $client->id)->update("clients", ["status" => "inactive"]);
+                        $this->Record->where("id", "=", $client->id)->insert("sensfrx_real_activity", array("sensfrx_log_type" => "Registration Webhook", "sensfrx_log1" => 'Client Email ' . $client->id . ' status successfully updated to inactive', "created_at" => date("Y-m-d H:i:s", time())));
+
+                        // Return success response
+                        $this->printJson([
+                            "status" => "success",
+                            "message" => "Client status updated successfully."
+                        ]);
+                    }
+                }
+            } else {
+                $this->printJson(
+                    [
+                        "status" => "error",
+                        "message" => "parrameter not found",
+                    ]
+                );
+            }
+            die;
+        }
+    }
+
+    /*
+        Rejects the request unless x-sfx-timestamp (Unix seconds) is within 300 s of now and x-sfx-signature
+        is the HMAC-SHA256 (hex) of timestamp . "." . raw body keyed with a signing secret Sensfrx issued for
+        a URL ending in this action's path (stored by SensfrxPlugin::structureLoad). Replay protection: the
+        body-only x-signature header is not accepted.
+    */
+    private function verifySignature($action, $rawBody)
+    {
+        $timestamp = isset($_SERVER['HTTP_X_SFX_TIMESTAMP']) ? (string) $_SERVER['HTTP_X_SFX_TIMESTAMP'] : '';
+        $signature = isset($_SERVER['HTTP_X_SFX_SIGNATURE']) ? strtolower(trim((string) $_SERVER['HTTP_X_SFX_SIGNATURE'])) : '';
+        $suffix = '/hooks/' . $action;
+        $valid = false;
+        if ($signature !== '' && preg_match('/^\d{1,12}$/D', $timestamp) && abs(time() - (int) $timestamp) <= 300) {
+            foreach ($this->SensfrxHelper->getWebhookSecrets() as $url => $secret) {
+                $url = (string) $url;
+                if (substr($url, -strlen($suffix)) !== $suffix || !is_string($secret) || $secret === '') {
+                    continue;
+                }
+                if (hash_equals(hash_hmac('sha256', $timestamp . '.' . (string) $rawBody, $secret), $signature)) {
+                    $valid = true;
+                    break;
+                }
+            }
+        }
+        if (!$valid) {
+            header("HTTP/1.1 401 Unauthorized");
+            echo json_encode(["status" => "error", "message" => "Invalid signature"]);
+            exit;
+        }
     }
 
     private function printJson($args = [])

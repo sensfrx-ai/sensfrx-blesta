@@ -25,6 +25,7 @@ class AdminManagePlugin extends AppController
         Loader::loadComponents($this, ['Session']);
         $this->plugin_id = isset($this->get[0]) ? $this->get[0] : null;
     }
+
     /**
      * Returns the view to be rendered when managing this plugin
      */
@@ -40,9 +41,10 @@ class AdminManagePlugin extends AppController
         if ($this->Session->read('sensfrx_manage_success') != null) {
             $vars["success"] = $this->Session->read('sensfrx_manage_success');
             $this->Session->write('sensfrx_manage_success', null);
+            $this->Session->write('sensfrx_manage_error', null);
         } elseif ($this->Session->read('sensfrx_manage_error') != null) {
             $vars["error"] = $this->Session->read('sensfrx_manage_error');
-            $this->Session->write('sensfrx_manage_error', null);
+            // $this->Session->write('sensfrx_manage_error', null);
         }
         // Set the view to render
         $this->view->setView('manage', 'sensfrx.manage');
@@ -63,9 +65,7 @@ class AdminManagePlugin extends AppController
 
         if (
             isset($_POST["domain"], $_POST["property_id"], $_POST["property_secret"]) &&
-            !empty($_POST["domain"]) &&
-            !empty($_POST["property_id"]) &&
-            !empty($_POST["property_secret"])
+            !empty($_POST["domain"])
         ) {
 
             $domain = $_POST["domain"];
@@ -84,7 +84,7 @@ class AdminManagePlugin extends AppController
 
             $api_response = json_encode($api_response);
 
-            $response = $this->SaveManageOptions->update($domain, $property_id, $property_secret, $api_response);
+            $response = $this->SaveManageOptions->update($domain, $property_id, $property_secret, $api_response);            
 
             // if ($response) {
             //     $this->Session->write('sensfrx_manage_success', Language::_('SensfrxManage.success', true));

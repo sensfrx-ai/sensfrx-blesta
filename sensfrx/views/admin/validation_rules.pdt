@@ -1,7 +1,4 @@
 <?php
-// echo "<pre>";
-// print_r($policies);
-// die;
 if (count($assets["stylesheet"]) > 0) :
     foreach ($assets["stylesheet"] as $key => $css) :
         echo "<link rel='stylesheet' href='$css'>";
@@ -134,7 +131,6 @@ table#packages th:first-child{
 }
 </style>
 
-
 <?php
 if (!empty($errorMessage)) {
 ?>
@@ -150,7 +146,6 @@ if (!empty($errorMessage)) {
 <?php
     }
 ?>
-
     <div class="common_box_content">
         <form method="post" action="">
             <table class="table table-as1" id="packages">

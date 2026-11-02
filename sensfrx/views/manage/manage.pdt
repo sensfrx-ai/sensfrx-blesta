@@ -48,7 +48,7 @@
 										<button type="submit" class="btn btn-primary">
 											<?php echo Language::_('SensfrxManage.button.save', true); ?>
 										</button>
-										<span>Don't have an account? Click here to <a target="_blank" href="https://sensfrx.ai/whmcs-price">sign up</a></span>
+										<span>Don't have an account? Click here to <a target="_blank" href="https://sensfrx.ai/blesta">sign up</a></span>
 									</td>
 								</tr>
 							</tbody>
